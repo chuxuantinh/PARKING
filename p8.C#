@@ -1,0 +1,15 @@
+private static System.Configuration.Configuration OpenExeConfigurationImpl(ConfigurationFileMap fileMap, bool isMachine, ConfigurationUserLevel userLevel, string exePath, bool preLoad = false)
+{
+    if ((!isMachine && ((((fileMap == null) && (exePath == null)) || ((fileMap != null) && (((ExeConfigurationFileMap) fileMap).ExeConfigFilename == null))) && (s_configSystem != null))) && (s_configSystem.GetType() != typeof(ClientConfigurationSystem)))
+    {
+        throw new ArgumentException(SR.GetString("Config_configmanager_open_noexe"));
+    }
+    System.Configuration.Configuration configuration = ClientConfigurationHost.OpenExeConfiguration(fileMap, isMachine, userLevel, exePath);
+    if (preLoad)
+    {
+        PreloadConfiguration(configuration);
+    }
+    return configuration;
+}
+
+ 

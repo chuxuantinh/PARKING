@@ -1,0 +1,195 @@
+namespace ParkingProcessComponent.Model
+{
+    internal enum CameraConnectionType
+    {
+        NetworkCameraViaRtsp = 1
+    }
+
+    internal static class CameraConnectionTypeExt
+    {
+        // Methods
+        public static List<CameraConnectionType> GetCameraConnectionTypeList();
+        public static string GetName(this CameraConnectionType type);
+    }
+
+    internal enum DeviceState
+    {
+        NotUsed,
+        Connecting,
+        Connected,
+        Disconnected,
+        DisconnectedByUser,
+        IncorrectConfig
+    }
+
+    internal delegate void DisconnectedHandler();
+
+    internal class KeyCodeTranslator
+    {
+        // Methods
+        public KeyCodeTranslator();
+        public static string GetName(Keys keyCode);
+    }
+
+    internal sealed class KeyCodeUtils
+    {
+        // Methods
+        public KeyCodeUtils();
+        public static string GetNumberKeyValue(Keys keyCode);
+    }
+
+    public static class LedBoardContants
+    {
+        // Fields
+        public const int MonitoringDelayTime = 0x1388;
+        public const int ResetDelayTime_Default = 0x2710;
+        public const int ResetDelayTime_Min = 0xbb8;
+        public const int ResetDelayTime_Max = 0x7530;
+        public static readonly List<int> AvailableBaudRates;
+
+        // Methods
+        static LedBoardContants();
+    }
+
+    internal class LoggedInSuccessfullyEventArgs : EventArgs
+    {
+        // Methods
+        public LoggedInSuccessfullyEventArgs(SessionDto session, bool showConfigs);
+
+        // Properties
+        public SessionDto Session { get; private set; }
+        public bool ShowConfigs { get; private set; }
+    }
+
+    internal delegate void LoggedInSucessfullyEventHandler(LoggedInSuccessfullyEventArgs args);
+
+    internal class ParkingConfigsSavedEventArgs : EventArgs
+    {
+        // Methods
+        public ParkingConfigsSavedEventArgs(ZoneDto zone);
+
+        // Properties
+        public ZoneDto Zone { get; private set; }
+    }
+
+    internal delegate void ParkingConfigsSavedEventHandler(ParkingConfigsSavedEventArgs args);
+
+    internal class ParkingContants
+    {
+        // Fields
+        public const int SwitchDirectionDelayTime = 0xfa0;
+        public const int ChangeVehicleTypeDelayTime = 0xfa0;
+        public const int DoubleKeyTimeout = 500;
+        public const int MaxLaneCount = 2;
+        public const string DateTimeFormat = "HH:mm:ss  dd/MM/yyyy";
+        public const string UnrecognizedNumberText = "";
+        public const string LedBoardFeesFormat = "({0:n0})";
+        public static readonly Color DefaultDarkColor;
+        public static readonly Color DefaultHighlightColor;
+
+        // Methods
+        static ParkingContants();
+        public ParkingContants();
+    }
+
+    internal class ParkingInArgs
+    {
+        // Methods
+        public ParkingInArgs();
+
+        // Properties
+        public bool IsProcessWithoutCard { get; set; }
+        public bool IsCardId { get; set; }
+        public long CardIdOrNumber { get; set; }
+        public bool IsUseExistingVehicleNumber { get; set; }
+        public string VehicleNumber { get; set; }
+    }
+
+    internal class ParkingOutArgs
+    {
+        // Methods
+        public ParkingOutArgs();
+
+        // Properties
+        public long ParkingInId { get; set; }
+        public Image OutFaceImage { get; set; }
+        public Image OutPlateImage { get; set; }
+        public Image InFaceImage { get; set; }
+        public Image InPlateImage { get; set; }
+        public string OutVehicleNumber { get; set; }
+        public bool IsFree { get; set; }
+    }
+
+    internal class ParkingOutReviewArgs
+    {
+        // Methods
+        public ParkingOutReviewArgs();
+
+        // Properties
+        public bool IsProcessWithoutCard { get; set; }
+        public bool IsCardId { get; set; }
+        public long CardIdOrNumber { get; set; }
+        public string VehicleNumber { get; set; }
+        public bool IsFree { get; set; }
+    }
+
+    internal class ReaderContants
+    {
+        // Fields
+        public const int CardDetectionDelayTime = 500;
+
+        // Methods
+        public ReaderContants();
+    }
+
+    internal enum ReaderType
+    {
+        HF = 1,
+        PCSC = 2,
+        MCR02 = 3
+    }
+
+    internal static class ReaderTypeExt
+    {
+        // Methods
+        public static string GetName(this ReaderType type);
+        public static List<ReaderType> GetReaderTypeList();
+    }
+
+    internal delegate void TagDetectedHandler(byte[] cardId, bool isFree);
+
+    internal class VideoSourceContants
+    {
+        // Fields
+        public const string ImageExtension = "jpg";
+        public const uint SnapshotWidth = 800;
+        public const uint SnapshotHeight = 600;
+        public const int CheckConnectionDelayTime = 0x3e8;
+        public const string NotConfiguredMessage = "Chưa cấu h\x00ecnh th\x00f4ng số kết nối";
+        public const string ConnectingMessage = "Đang kết nối đến camera...";
+        public const string DataReceivingMessage = "Đang nhận t\x00edn hiệu từ camera";
+        public const string DisconnectedMessage = "Kh\x00f4ng nhận được t\x00edn hiệu từ camera";
+        public const string DisconnectingMessage = "Đang ngắt kết nối với camera...";
+        public const string DisconnectedByUserMessage = "Đ\x00e3 ngưng nhận t\x00edn hiệu\ntheo y\x00eau cầu của người d\x00f9ng";
+        public static readonly string SnapshotDirPath;
+
+        // Methods
+        static VideoSourceContants();
+        public VideoSourceContants();
+    }
+
+    internal class VideoSourceEventArgs : EventArgs
+    {
+        // Methods
+        public VideoSourceEventArgs(IntPtr canvasHandle);
+
+        // Properties
+        public IntPtr CanvasHandle { get; private set; }
+    }
+
+    internal delegate void VideoSourceEventHandler(VideoSourceEventArgs e);
+}
+
+ 
+Collapse Types
+ 

@@ -1,0 +1,628 @@
+public class LocalConfigsManager
+{
+    // Fields
+    public const string Key_ExportListCardToFile = "ExportListCardToFile";
+    public const string Key_CheckDataCard = "CheckDataCard";
+    public const string Key_PercentZoomImageInTop = "PercentZoomImageInTop";
+    public const string Key_PercentZoomImageInBot = "PercentZoomImageInBot";
+    public const string Key_PercentZoomImageOutTop = "PercentZoomImageOutTop";
+    public const string Key_PercentZoomImageOutBot = "PercentZoomImageOutBot";
+    public const string Key_NumberStartListCardToFile = "NumberStartListCardToFile";
+    public const string Key_UsedPrinter = "UsedPrinter";
+    public const string Key_PrintBillName = "PrintBillName";
+    public const string Key_RecordsPerPage = "RecordsPerPage";
+    public const string Key_FrmParkingInDetail_DontAskForConfirmUpdate = "FrmParkingInDetail_DontAskForConfirmUpdate";
+    public const string Key_FrmUnregsiterMonthlyCards_LoadMonthlyCardsEveryOpen = "FrmUnregsiterMonthlyCards_LoadMonthlyCardsEveryOpen";
+    public const string Key_ServerStatus_StorageWarningPercentage = "ServerStatus_WarningPercentage";
+    public const string Key_Camera_CachingTime = "Camera_CachingTime";
+    public const string Key_LedBoard_MaxLength = "LedBoard_MaxLength";
+    public const string Key_FrmMonthlyPassDetail_HasVehicleInfo = "FrmMonthlyPassDetail_HasVehicleInfo";
+    public const string Key_FrmMonthlyPassDetail_HasCardInfo = "FrmMonthlyPassDetail_HasCardInfo";
+    public const string Key_FrmExportToFileOptions_SheetName = "FrmExportToFileOptions_SheetName";
+    public const string Key_FrmExportToFileOptions_FontName = "FrmExportToFileOptions_FontName";
+    public const string Key_FrmExportToFileOptions_Header_FontSize = "FrmExportToFileOptions_Header_FontSize";
+    public const string Key_FrmExportToFileOptions_Header_FontColor = "FrmExportToFileOptions_Header_FontColor";
+    public const string Key_FrmExportToFileOptions_Header_BackColor = "FrmExportToFileOptions_Header_BackColor";
+    public const string Key_FrmExportToFileOptions_Header_RowHeight = "FrmExportToFileOptions_Header_RowHeight";
+    public const string Key_FrmExportToFileOptions_Body_FontSize = "FrmExportToFileOptions_Body_FontSize";
+    public const string Key_FrmExportToFileOptions_Body_FontColor = "FrmExportToFileOptions_Body_FontColor";
+    public const string Key_FrmExportToFileOptions_Body_BackColor = "FrmExportToFileOptions_Body_BackColor";
+    public const string Key_FrmExportToFileOptions_Body_RowHeight = "FrmExportToFileOptions_Body_RowHeight";
+    public const string Key_FrmEndShiftConfirmation_StartShiftAfterEnd = "FrmEndShiftConfirmation_StartShiftAfterEnd";
+    public const string Key_ShiftMgt_DefaultZoneId = "ShiftMgt_DefaultZoneId";
+    public const int Def_RecordsPerPage = 200;
+    public const bool Def_CheckDataCard = false;
+    public const int Def_PercentZoomImageInTop = 100;
+    public const int Def_PercentZoomImageInBot = 100;
+    public const int Def_PercentZoomImageOutTop = 100;
+    public const int Def_PercentZoomImageOutBot = 100;
+    public const bool Def_DontAskForConfirmUpdateParkingIn = false;
+    public const bool Def_FrmUnregsiterMonthlyCards_LoadMonthlyCardsEveryOpen = true;
+    public const float Def_ServerStatus_StorageWarningPercentage = 10f;
+    public const int Def_Camera_CachingTime = 0x3e8;
+    public const int Def_LedBoard_MaxLength = 7;
+    public const bool Def_FrmMonthlyPassDetail_HasCardInfo = false;
+    public const bool Def_FrmMonthlyPassDetail_HasVehicleInfo = true;
+    public const bool Def_ExportListCardToFile = false;
+    public const int Def_NumberStartListCardToFile = 1;
+    public const bool Def_UsedPrinter = false;
+    public const string Def_PrintBillName = "Bill.rdlc";
+    public const string Def_FrmExportToFileOptions_SheetName = "Sheet 1";
+    public const string Def_FrmExportToFileOptions_FontName = "Tahoma";
+    public const int Def_FrmExportToFileOptions_Header_FontSize = 10;
+    public const string Def_FrmExportToFileOptions_Header_FontColor = "#FFFFFF";
+    public const string Def_FrmExportToFileOptions_Header_BackColor = "#244062";
+    public const int Def_FrmExportToFileOptions_Header_RowHeight = 20;
+    public const int Def_FrmExportToFileOptions_Body_FontSize = 10;
+    public const string Def_FrmExportToFileOptions_Body_FontColor = "#000000";
+    public const string Def_FrmExportToFileOptions_Body_BackColor = "#DCE6F1";
+    public const int Def_FrmExportToFileOptions_Body_RowHeight = 15;
+    public const bool Def_FrmEndShiftConfirmation_StartShiftAfterEnd = true;
+    public const int Min_RecordsPerPage = 10;
+    public const int Max_RecordsPerPage = 500;
+    public const int Min_ServerStatus_StorageWarningPercentage = 5;
+    public const int Max_ServerStatus_StorageWarningPercentage = 100;
+    public const int Min_Camera_CachingTime = 0;
+    public const int Max_Camera_CachingTime = 0x7d0;
+    public const int Min_LedBoard_MaxLength = 1;
+    public const int Min_FrmExportToFileOptions_FontSize = 6;
+    public const int Max_FrmExportToFileOptions_FontSize = 0x48;
+    public const int Min_FrmExportToFileOptions_RowHeight = 10;
+    public const int Max_FrmExportToFileOptions_RowHeight = 0x199;
+    private static LocalConfigsManager instance = new LocalConfigsManager();
+    private System.Configuration.Configuration configs = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+    // Methods
+    private LocalConfigsManager()
+    {
+    }
+
+    public void Save()
+    {
+        this.configs.Save(ConfigurationSaveMode.Full);
+        ConfigurationManager.RefreshSection("appSettings");
+    }
+
+    // Properties
+    public static LocalConfigsManager Instance =>
+        instance;
+
+    public bool ExportListCardToFile
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["ExportListCardToFile"].Value;
+            return ((str != null) ? str.Equals("YES", StringComparison.CurrentCultureIgnoreCase) : false);
+        }
+        set
+        {
+            string str = value ? "YES" : "NO";
+            string str2 = this.configs.AppSettings.Settings["ExportListCardToFile"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["ExportListCardToFile"].Value = str;
+            }
+        }
+    }
+
+    public bool CheckDataCard
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["CheckDataCard"].Value;
+            return ((str != null) ? str.Equals("YES", StringComparison.CurrentCultureIgnoreCase) : false);
+        }
+        set
+        {
+            string str = value ? "YES" : "NO";
+            string str2 = this.configs.AppSettings.Settings["CheckDataCard"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["CheckDataCard"].Value = str;
+            }
+        }
+    }
+
+    public int PercentZoomImageInTop
+    {
+        get
+        {
+            int num;
+            return (!int.TryParse(this.configs.AppSettings.Settings["PercentZoomImageInTop"].Value, out num) ? 100 : num);
+        }
+        set
+        {
+            string str = value.ToString();
+            string str2 = this.configs.AppSettings.Settings["PercentZoomImageInTop"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["PercentZoomImageInTop"].Value = str;
+            }
+        }
+    }
+
+    public int PercentZoomImageInBot
+    {
+        get
+        {
+            int num;
+            return (!int.TryParse(this.configs.AppSettings.Settings["PercentZoomImageInBot"].Value, out num) ? 100 : num);
+        }
+        set
+        {
+            string str = value.ToString();
+            string str2 = this.configs.AppSettings.Settings["PercentZoomImageInBot"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["PercentZoomImageInBot"].Value = str;
+            }
+        }
+    }
+
+    public int PercentZoomImageOutTop
+    {
+        get
+        {
+            int num;
+            return (!int.TryParse(this.configs.AppSettings.Settings["PercentZoomImageOutTop"].Value, out num) ? 100 : num);
+        }
+        set
+        {
+            string str = value.ToString();
+            string str2 = this.configs.AppSettings.Settings["PercentZoomImageOutTop"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["PercentZoomImageOutTop"].Value = str;
+            }
+        }
+    }
+
+    public int PercentZoomImageOutBot
+    {
+        get
+        {
+            int num;
+            return (!int.TryParse(this.configs.AppSettings.Settings["PercentZoomImageOutBot"].Value, out num) ? 100 : num);
+        }
+        set
+        {
+            string str = value.ToString();
+            string str2 = this.configs.AppSettings.Settings["PercentZoomImageOutBot"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["PercentZoomImageOutBot"].Value = str;
+            }
+        }
+    }
+
+    public int NumberStartListCardToFile
+    {
+        get
+        {
+            int num;
+            return (!int.TryParse(this.configs.AppSettings.Settings["NumberStartListCardToFile"].Value, out num) ? 1 : num);
+        }
+        set
+        {
+            string str = value.ToString();
+            string str2 = this.configs.AppSettings.Settings["NumberStartListCardToFile"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["NumberStartListCardToFile"].Value = str;
+            }
+        }
+    }
+
+    public int RecordsPerPages
+    {
+        get
+        {
+            int num;
+            return ((!int.TryParse(this.configs.AppSettings.Settings["RecordsPerPage"].Value, out num) || ((num < 10) || (num > 500))) ? 200 : num);
+        }
+    }
+
+    public bool FrmParkingInDetail_DontAskForConfirmUpdateParkingIn
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["FrmParkingInDetail_DontAskForConfirmUpdate"].Value;
+            return ((str != null) ? str.Equals("YES", StringComparison.CurrentCultureIgnoreCase) : false);
+        }
+        set
+        {
+            string str = value ? "YES" : "NO";
+            string str2 = this.configs.AppSettings.Settings["FrmParkingInDetail_DontAskForConfirmUpdate"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["FrmParkingInDetail_DontAskForConfirmUpdate"].Value = str;
+            }
+        }
+    }
+
+    public bool FrmUnregsiterMonthlyCards_LoadMonthlyCardsEveryOpen
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["FrmUnregsiterMonthlyCards_LoadMonthlyCardsEveryOpen"].Value;
+            return ((str != null) ? str.Equals("YES", StringComparison.CurrentCultureIgnoreCase) : true);
+        }
+        set
+        {
+            string str = value ? "YES" : "NO";
+            string str2 = this.configs.AppSettings.Settings["FrmUnregsiterMonthlyCards_LoadMonthlyCardsEveryOpen"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["FrmUnregsiterMonthlyCards_LoadMonthlyCardsEveryOpen"].Value = str;
+            }
+        }
+    }
+
+    public float StorageWarningPercentage
+    {
+        get
+        {
+            int num;
+            return ((!int.TryParse(this.configs.AppSettings.Settings["ServerStatus_WarningPercentage"].Value, out num) || ((num < 5) || (num > 100))) ? 10f : ((float) num));
+        }
+    }
+
+    public int CameraCachingTime
+    {
+        get
+        {
+            int num;
+            return ((!int.TryParse(this.configs.AppSettings.Settings["Camera_CachingTime"].Value, out num) || ((num < 0) || (num > 0x7d0))) ? 0x3e8 : num);
+        }
+        set
+        {
+            if ((value >= 0) && (value <= 0x7d0))
+            {
+                string str = value.ToString();
+                string str2 = this.configs.AppSettings.Settings["Camera_CachingTime"].Value;
+                if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    this.configs.AppSettings.Settings["Camera_CachingTime"].Value = str;
+                }
+            }
+        }
+    }
+
+    public int LedBoardMaxLength
+    {
+        get
+        {
+            int num;
+            return ((!int.TryParse(this.configs.AppSettings.Settings["LedBoard_MaxLength"].Value, out num) || (num < 1)) ? 7 : num);
+        }
+        set
+        {
+            if (value >= 1)
+            {
+                string str = value.ToString();
+                string str2 = this.configs.AppSettings.Settings["LedBoard_MaxLength"].Value;
+                if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    this.configs.AppSettings.Settings["LedBoard_MaxLength"].Value = str;
+                }
+            }
+        }
+    }
+
+    public bool FrmMonthlyPassDetail_HasVehicleInfo
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["FrmMonthlyPassDetail_HasVehicleInfo"].Value;
+            return ((str != null) ? str.Equals("YES", StringComparison.CurrentCultureIgnoreCase) : true);
+        }
+        set
+        {
+            string str = value ? "YES" : "NO";
+            string str2 = this.configs.AppSettings.Settings["FrmMonthlyPassDetail_HasVehicleInfo"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["FrmMonthlyPassDetail_HasVehicleInfo"].Value = str;
+            }
+        }
+    }
+
+    public bool FrmMonthlyPassDetail_HasCardInfo
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["FrmMonthlyPassDetail_HasCardInfo"].Value;
+            return ((str != null) ? str.Equals("YES", StringComparison.CurrentCultureIgnoreCase) : false);
+        }
+        set
+        {
+            string str = value ? "YES" : "NO";
+            string str2 = this.configs.AppSettings.Settings["FrmMonthlyPassDetail_HasCardInfo"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["FrmMonthlyPassDetail_HasCardInfo"].Value = str;
+            }
+        }
+    }
+
+    public bool UsedPrinter
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["UsedPrinter"].Value;
+            return ((str != null) ? str.Equals("YES", StringComparison.CurrentCultureIgnoreCase) : false);
+        }
+        set
+        {
+            string str = value ? "YES" : "NO";
+            string str2 = this.configs.AppSettings.Settings["UsedPrinter"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["UsedPrinter"].Value = str;
+            }
+        }
+    }
+
+    public string PrintBillName
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["PrintBillName"].Value;
+            return (string.IsNullOrEmpty(str) ? "Bill.rdlc" : str);
+        }
+        set
+        {
+            value = (value != null) ? value.Trim() : string.Empty;
+            string x = value;
+            if (!StringUtils.AreEqual(x, this.configs.AppSettings.Settings["PrintBillName"].Value))
+            {
+                this.configs.AppSettings.Settings["PrintBillName"].Value = x;
+            }
+        }
+    }
+
+    public string FrmExportToFileOptions_SheetName
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["FrmExportToFileOptions_SheetName"].Value;
+            return (string.IsNullOrEmpty(str) ? "Sheet 1" : str);
+        }
+        set
+        {
+            value = (value != null) ? value.Trim() : string.Empty;
+            string x = value;
+            if (!StringUtils.AreEqual(x, this.configs.AppSettings.Settings["FrmExportToFileOptions_SheetName"].Value))
+            {
+                this.configs.AppSettings.Settings["FrmExportToFileOptions_SheetName"].Value = x;
+            }
+        }
+    }
+
+    public string FrmExportToFileOptions_FontName
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["FrmExportToFileOptions_FontName"].Value;
+            return (string.IsNullOrEmpty(str) ? "Tahoma" : str);
+        }
+        set
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                string x = value;
+                if (!StringUtils.AreEqual(x, this.configs.AppSettings.Settings["FrmExportToFileOptions_FontName"].Value))
+                {
+                    this.configs.AppSettings.Settings["FrmExportToFileOptions_FontName"].Value = x;
+                }
+            }
+        }
+    }
+
+    public int FrmExportToFileOptions_Header_FontSize
+    {
+        get
+        {
+            int num;
+            return ((!int.TryParse(this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_FontSize"].Value, out num) || (num < 6)) ? 10 : num);
+        }
+        set
+        {
+            if (value >= 6)
+            {
+                string str = value.ToString();
+                string str2 = this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_FontSize"].Value;
+                if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_FontSize"].Value = str;
+                }
+            }
+        }
+    }
+
+    public string FrmExportToFileOptions_Header_FontColor
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_FontColor"].Value;
+            return (string.IsNullOrEmpty(str) ? "#FFFFFF" : str);
+        }
+        set
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                string x = value;
+                if (!StringUtils.AreEqual(x, this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_FontColor"].Value))
+                {
+                    this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_FontColor"].Value = x;
+                }
+            }
+        }
+    }
+
+    public string FrmExportToFileOptions_Header_BackColor
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_BackColor"].Value;
+            return (string.IsNullOrEmpty(str) ? "#244062" : str);
+        }
+        set
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                string x = value;
+                if (!StringUtils.AreEqual(x, this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_BackColor"].Value))
+                {
+                    this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_BackColor"].Value = x;
+                }
+            }
+        }
+    }
+
+    public int FrmExportToFileOptions_Header_RowHeight
+    {
+        get
+        {
+            int num;
+            return ((!int.TryParse(this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_RowHeight"].Value, out num) || (num < 10)) ? 10 : num);
+        }
+        set
+        {
+            if ((value >= 10) || (value <= 0x199))
+            {
+                string str = value.ToString();
+                string str2 = this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_RowHeight"].Value;
+                if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    this.configs.AppSettings.Settings["FrmExportToFileOptions_Header_RowHeight"].Value = str;
+                }
+            }
+        }
+    }
+
+    public int FrmExportToFileOptions_Body_FontSize
+    {
+        get
+        {
+            int num;
+            return ((!int.TryParse(this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_FontSize"].Value, out num) || (num < 6)) ? 10 : num);
+        }
+        set
+        {
+            if (value >= 6)
+            {
+                string str = value.ToString();
+                string str2 = this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_FontSize"].Value;
+                if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_FontSize"].Value = str;
+                }
+            }
+        }
+    }
+
+    public string FrmExportToFileOptions_Body_FontColor
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_FontColor"].Value;
+            return (string.IsNullOrEmpty(str) ? "#000000" : str);
+        }
+        set
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                string x = value;
+                if (!StringUtils.AreEqual(x, this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_FontColor"].Value))
+                {
+                    this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_FontColor"].Value = x;
+                }
+            }
+        }
+    }
+
+    public string FrmExportToFileOptions_Body_BackColor
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_BackColor"].Value;
+            return (string.IsNullOrEmpty(str) ? "#DCE6F1" : str);
+        }
+        set
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                string x = value;
+                if (!StringUtils.AreEqual(x, this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_BackColor"].Value))
+                {
+                    this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_BackColor"].Value = x;
+                }
+            }
+        }
+    }
+
+    public int FrmExportToFileOptions_Body_RowHeight
+    {
+        get
+        {
+            int num;
+            return ((!int.TryParse(this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_RowHeight"].Value, out num) || (num < 10)) ? 15 : num);
+        }
+        set
+        {
+            if ((value >= 10) || (value <= 0x199))
+            {
+                string str = value.ToString();
+                string str2 = this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_RowHeight"].Value;
+                if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    this.configs.AppSettings.Settings["FrmExportToFileOptions_Body_RowHeight"].Value = str;
+                }
+            }
+        }
+    }
+
+    public bool FrmEndShiftConfirmation_StartShiftAfterEnd
+    {
+        get
+        {
+            string str = this.configs.AppSettings.Settings["FrmEndShiftConfirmation_StartShiftAfterEnd"].Value;
+            return ((str != null) ? str.Equals("YES", StringComparison.CurrentCultureIgnoreCase) : true);
+        }
+        set
+        {
+            string str = value ? "YES" : "NO";
+            string str2 = this.configs.AppSettings.Settings["FrmEndShiftConfirmation_StartShiftAfterEnd"].Value;
+            if ((str2 == null) || !str2.Equals(str, StringComparison.CurrentCultureIgnoreCase))
+            {
+                this.configs.AppSettings.Settings["FrmEndShiftConfirmation_StartShiftAfterEnd"].Value = str;
+            }
+        }
+    }
+
+    public long? ShiftMgt_DefaultZoneId
+    {
+        get
+        {
+            long num;
+            if (long.TryParse(this.configs.AppSettings.Settings["ShiftMgt_DefaultZoneId"].Value, out num))
+            {
+                return new long?(num);
+            }
+            return null;
+        }
+        set
+        {
+            string x = value?.ToString();
+            if (!StringUtils.AreEqual(x, this.configs.AppSettings.Settings["ShiftMgt_DefaultZoneId"].Value))
+            {
+                this.configs.AppSettings.Settings["ShiftMgt_DefaultZoneId"].Value = x;
+            }
+        }
+    }
+}
+
+ 
+Collapse Methods
+ 

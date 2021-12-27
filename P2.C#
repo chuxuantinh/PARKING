@@ -1,0 +1,34 @@
+namespace ParkingProcessComponent.Device.Camera.Sa7130Capture
+{
+    internal class Sa7130CaptureWrapper
+    {
+        // Fields
+        private const string DllName = "Sa7130Capture.dll";
+
+        // Methods
+        public Sa7130CaptureWrapper();
+        [DllImport("Sa7130Capture.dll")]
+        public static extern int ChannelClose(IntPtr hChannelHandle);
+        [DllImport("Sa7130Capture.dll")]
+        public static extern IntPtr ChannelOpen(int ChannelNum);
+        [DllImport("Sa7130Capture.dll")]
+        public static extern int DeInitDSPs();
+        [DllImport("Sa7130Capture.dll")]
+        public static extern int GetTotalChannels();
+        [DllImport("Sa7130Capture.dll")]
+        public static extern int GetTotalDSPs();
+        [DllImport("Sa7130Capture.dll")]
+        public static extern int InitDSPs(IntPtr hOverlayWnd);
+        [DllImport("Sa7130Capture.dll")]
+        public static extern int SaveToBMPFile(IntPtr hChannelHandle, string FileName);
+        [DllImport("Sa7130Capture.dll")]
+        public static extern int SaveToJpegFile(IntPtr hChannelHandle, string lpFileName, int dwQuality);
+        [DllImport("Sa7130Capture.dll")]
+        public static extern int StartVideoPreview(IntPtr hChannelHandle, IntPtr WndHandle, ref Rectangle rect, bool bOverlay, int VideoFormat, int FrameRate);
+        [DllImport("Sa7130Capture.dll")]
+        public static extern int StopVideoPreview(IntPtr hChannelHandle);
+        [DllImport("Sa7130Capture.dll")]
+        public static extern int UpdateOvelayWnd(IntPtr hOverlayWnd);
+    }
+}
+

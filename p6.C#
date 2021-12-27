@@ -1,0 +1,9 @@
+public static class UserActivityFormat
+{
+    // Fields
+    public static string UserActionFormat = "{0} đ\x00e3 thực hiện thao t\x00e1c '{1}'";
+    public static string UserActionObjectFormat = "{0} đ\x00e3 thực hiện thao t\x00e1c '{1} với th\x00f4ng tin {2}'";
+    public static string ParkingInProcessFormat = "'Cho Xe V\x00e0o' đối với xe {0} - Loại xe: {1} - Thời gian v\x00e0o: {2}";
+    public static string ParkingOutProcessFormat = "'Cho Xe Ra' đối với xe {0} - Loại xe: {1} - Thời gian v\x00e0o: {2}";
+}
+

@@ -1,0 +1,834 @@
+namespace ParkingProcessComponent.View
+{
+    internal interface IOverlayForm
+    {
+        // Methods
+        void HandleKeyDown(object sender, KeyEventArgs e);
+
+        // Properties
+        bool Visible { get; }
+    }
+
+    internal class KeyShortcut
+    {
+        // Methods
+        public KeyShortcut();
+
+        // Properties
+        public int Key { get; set; }
+        public string KeyName { get; set; }
+    }
+
+    internal class ListBoxItem
+    {
+        // Methods
+        public ListBoxItem();
+
+        // Properties
+        public string DisplayMember { get; set; }
+        public byte ValueMember { get; set; }
+    }
+
+    internal enum NotificationType
+    {
+        Succeed = 1,
+        Failed = 2
+    }
+
+    internal class UrsCardNumber : UsrPopupDialog, IOverlayForm
+    {
+        // Fields
+        private KeysConverter kc;
+        private Keys kConfirm;
+        private Keys kCancel;
+        private Keys kBackspace;
+        private List<Keys> kNumbers;
+        private string HintFormat;
+        private EventHandler ConfirmKeyDown;
+        private IContainer components;
+        private Label label1;
+        private Label lblKeyHint;
+        private Panel panel1;
+        private Label lblCardNumber;
+
+        // Events
+        public event EventHandler ConfirmKeyDown;
+
+        // Methods
+        public UrsCardNumber(bool isLeftLane, Keys kBackspace, Keys kConfirm, Keys kCancel);
+        protected override void Dispose(bool disposing);
+        public void HandleKeyDown(object sender, KeyEventArgs e);
+        private void InitializeComponent();
+
+        // Properties
+        public long? CardNumber { get; set; }
+        bool IOverlayForm.Visible { get; }
+    }
+
+    internal class UsrCameraCanvas : UserControl
+    {
+        // Fields
+        private EventHandler StartRequested;
+        private EventHandler StopRequested;
+        private IContainer components;
+        private ContextMenuStrip contextMenu;
+        private ToolStripMenuItem tsmiStart;
+        private ToolStripMenuItem tsmiStop;
+        private Label lblMessage;
+
+        // Events
+        public event EventHandler StartRequested;
+        public event EventHandler StopRequested;
+
+        // Methods
+        public UsrCameraCanvas();
+        protected override void Dispose(bool disposing);
+        private void InitializeComponent();
+        private void tsmiStart_Click(object sender, EventArgs e);
+        private void tsmiStop_Click(object sender, EventArgs e);
+
+        // Properties
+        public string Message { set; }
+    }
+
+    public class UsrChooseKeyShortcut : UserControl
+    {
+        // Fields
+        private List<KeyShortcut> keyShortcutList;
+        private IContainer components;
+        private ComboBox cbxKey;
+        private Label lbName;
+
+        // Methods
+        public UsrChooseKeyShortcut();
+        protected override void Dispose(bool disposing);
+        private void InitializeComponent();
+        private void LoadKeyLeft();
+        private void LoadKeyRight();
+
+        // Properties
+        public bool IsLeftLane { set; }
+        public string ChangeName { get; set; }
+        public int KeyValue { get; set; }
+        public int VehicleType { get; set; }
+    }
+
+    internal class UsrDeviceStatus : UserControl
+    {
+        // Fields
+        private DeviceState currentState;
+        private readonly Color NotUsedForeColor;
+        private readonly Color IncorrectConfigColor;
+        private readonly Color ConnectingForeColor;
+        private readonly Color ConnectedForeColor;
+        private readonly Color DisconnectedForeColor;
+        private Button btnDisconnect;
+        private Panel panel1;
+        private Button btnConnect;
+        private Label lblMessage;
+        private readonly Color PausedForeColor;
+        private EventHandler ItemConnectClicked;
+        private EventHandler ItemDisconnectClicked;
+
+        // Events
+        public event EventHandler ItemConnectClicked;
+        public event EventHandler ItemDisconnectClicked;
+
+        // Methods
+        public UsrDeviceStatus();
+        private void InitializeComponent();
+        private void UpdateView();
+
+        // Properties
+        [Category("Appearance")]
+        public DeviceState State { get; set; }
+    }
+
+    internal class UsrLaneConfig : CommonUserControl
+    {
+        // Fields
+        private readonly bool isLeftLane;
+        private LaneConfigElement configs;
+        private BackgroundWorker bgwLoadZones;
+        private BindingList<ZoneDto> zones;
+        private readonly Color PictureBoxHoverBackColor;
+        private ParkingConfigsSavedEventHandler ConfigSaved;
+        private EventHandler LogoutRequested;
+        private IContainer components;
+        private Line line1;
+        private Panel panel3;
+        private Panel panel2;
+        private TabControl tabControl1;
+        private TabPage tabPage2;
+        private PictureBox pbxRefreshZoneList;
+        private RadioButton rbtnDirectionIn;
+        private RadioButton rbtnDirectionOut;
+        private Label label7;
+        private Label label8;
+        private CheckBox cbxEnableSwitchDirection;
+        private ComboBox cmbSelectedVehicleTypes;
+        private Label label5;
+        private CheckedListBox lstZoneVehicleTypes;
+        private Label label4;
+        private Label label3;
+        private ComboBox cmbZones;
+        private Label label2;
+        private TabPage tabPage3;
+        private Label label12;
+        private NumericUpDown tbxReaderConnection;
+        private ComboBox cmbReaderTypes;
+        private Label label11;
+        private Label label10;
+        private TabPage tabPage1;
+        private TabPage tabPage5;
+        private GroupBox groupBox5;
+        private CheckBox cbxUseLedBoard;
+        private NumericUpDown tbxLebBoardComPort;
+        private Label label13;
+        private TabPage tabPage4;
+        private GroupBox groupBox3;
+        private ComboBox cmbOutCarPlateCameraTypes;
+        private Label label16;
+        private Label label17;
+        private TextBox tbxOutCarPlateCameraConn;
+        private Label label30;
+        private Label label31;
+        private CheckBox cbxUseOutCarCamera;
+        private ComboBox cmbOutCarFaceCameraTypes;
+        private Label label32;
+        private Label label33;
+        private TextBox tbxOutCarFaceCameraConn;
+        private Panel panel7;
+        private GroupBox groupBox4;
+        private ComboBox cmbOutMotorPlateCameraTypes;
+        private Label label34;
+        private Label label35;
+        private TextBox tbxOutMotorPlateCameraConn;
+        private Label label36;
+        private Label label37;
+        private CheckBox cbxUseOutMotorCamera;
+        private ComboBox cmbOutMotorFaceCameraTypes;
+        private Label label38;
+        private Label label39;
+        private TextBox tbxOutMotorFaceCameraConn;
+        private GroupBox groupBox2;
+        private ComboBox cmbInCarPlateCameraTypes;
+        private Label label24;
+        private Label label25;
+        private TextBox tbxInCarPlateCameraConn;
+        private Label label26;
+        private Label label27;
+        private CheckBox cbxUseInCarCamera;
+        private ComboBox cmbInCarFaceCameraTypes;
+        private Label label28;
+        private Label label29;
+        private TextBox tbxInCarFaceCameraConn;
+        private Panel panel6;
+        private GroupBox groupBox1;
+        private ComboBox cmbInMotorPlateCameraTypes;
+        private Label label22;
+        private Label label23;
+        private TextBox tbxInMotorPlateCameraConn;
+        private Label label21;
+        private Label label1;
+        private CheckBox cbxUseInMotorCamera;
+        private ComboBox cmbInMotorFaceCameraTypes;
+        private Label label14;
+        private Label label15;
+        private TextBox tbxInMotorFaceCameraConn;
+        private Label lblMessage;
+        private Panel panel1;
+        private Button btnLogout;
+        private Button btnResetOrigin;
+        private Button btnSave;
+        private Label label6;
+        private ComboBox cmbBaudRates;
+        private Label label18;
+        private NumericUpDown tbxLebBoardResetDelayTime;
+        private CheckBox cbxAutoResetLedBoard;
+        private CheckBox cbxBeepOnTag;
+        private CheckBox ckbMCR02Userd;
+        private NumericUpDown numMCR02Port;
+        private Label label9;
+        private GroupBox groupBarrier;
+        private ComboBox cbxBaudRateBarrier;
+        private CheckBox ckbBarrierUsed;
+        private Label label19;
+        private Label label20;
+        private NumericUpDown numComBarrier;
+        private CheckBox cbxRollBackVehicleType;
+        private CheckBox ckxReaderIP;
+        private CheckBox ckxReader;
+        private Label label40;
+        private TabPage tabPage6;
+        private GroupBox groupBox6;
+        private Panel panel12;
+        private UsrChooseKeyShortcut usrChooseKeyConfirm;
+        private UsrChooseKeyShortcut usrChooseKeyChangeLane;
+        private UsrChooseKeyShortcut usrChooseKeyChangeVehicleType;
+        private UsrChooseKeyShortcut usrChooseKeyDown;
+        private UsrChooseKeyShortcut usrChooseKeyUp;
+        private UsrChooseKeyShortcut usrChooseKeyCancle;
+        private UsrChooseKeyShortcut usrChooseKeyVehicleNumber;
+        private Label label42;
+        private Panel plVehicleTypeLeft;
+        private Label label41;
+        private UsrChooseKeyShortcut usrChooseKeyBarrier;
+
+        // Events
+        public event ParkingConfigsSavedEventHandler ConfigSaved;
+        public event EventHandler LogoutRequested;
+
+        // Methods
+        public UsrLaneConfig(bool isLeftLane);
+        private void AddKeyVehicleType(bool isLeftLane, ComboBoxItem item);
+        private void bgwLoadZones_DoWork(object sender, DoWorkEventArgs e);
+        private void bgwLoadZones_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e);
+        private void btnLogout_Click(object sender, EventArgs e);
+        private void btnResetOrigin_Click(object sender, EventArgs e);
+        private void btnSave_Click(object sender, EventArgs e);
+        private void cbxAutoResetLedBoard_CheckedChanged(object sender, EventArgs e);
+        private void cbxUseInCarCamera_CheckedChanged(object sender, EventArgs e);
+        private void cbxUseInMotorCamera_CheckedChanged(object sender, EventArgs e);
+        private void cbxUseLedBoard_CheckedChanged(object sender, EventArgs e);
+        private void cbxUseOutCarCamera_CheckedChanged(object sender, EventArgs e);
+        private void cbxUseOutMotorCamera_CheckedChanged(object sender, EventArgs e);
+        private void ckbBarrierUsed_CheckedChanged(object sender, EventArgs e);
+        private void ckbMCR02Userd_CheckedChanged(object sender, EventArgs e);
+        private void cmbZones_SelectedIndexChanged(object sender, EventArgs e);
+        private void DefaultKeyBoard(bool isLeftLane);
+        protected override void Dispose(bool disposing);
+        private void InitializeComponent();
+        private void LoadZones();
+        private void LockViewToLoadZones(bool isLock);
+        private void lstZoneVehicleTypes_ItemCheck(object sender, ItemCheckEventArgs e);
+        protected override void OnLoad(EventArgs e);
+        private void pbxRefreshZoneList_Click(object sender, EventArgs e);
+        private void pbxRefreshZoneList_MouseEnter(object sender, EventArgs e);
+        private void pbxRefreshZoneList_MouseLeave(object sender, EventArgs e);
+        private void PopulateCameraConnectionTypesToComboBox(ComboBox comboBox);
+        private void PopulateConfigsToView();
+        private void PopulateReaderTypesToComboBox(ComboBox comboBox);
+        private void RemoveVehicleType(ComboBoxItem item);
+        private void SaveConfigsToFile();
+        private void SaveVehicleType();
+        private void SaveVehicleType(int vehicleType);
+        public void ShowMessage(string message);
+        private bool ValidateUserInput();
+
+        // Properties
+        [ServiceDependency]
+        public IParkingProxy ParkingProxy { private get; set; }
+        [ServiceDependency]
+        public ILocalStorageService StorageService { private get; set; }
+    }
+
+    internal class UsrLaneContainer : CommonUserControl
+    {
+        // Fields
+        private readonly bool isLeftLane;
+        private readonly LaneConfigElement configs;
+        private UsrLaneLogin loginForm;
+        private UsrLaneConfig configForm;
+        private UsrParkingLane parkingForm;
+        private BackgroundWorker bgwLoadZone;
+        private IContainer components;
+
+        // Methods
+        public UsrLaneContainer(bool isLeftLane);
+        private void bgwLoadZone_Completed(object sender, RunWorkerCompletedEventArgs e);
+        private void bgwLoadZone_DoWork(object sender, DoWorkEventArgs e);
+        private void CheckConfigsWithZoneData(long zoneId);
+        private void configForm_ConfigsSaved(ParkingConfigsSavedEventArgs e);
+        private void configForm_LogoutRequested(object sender, EventArgs e);
+        protected override void Dispose(bool disposing);
+        [EventSubscription("ExpireAllSessionsCalled")]
+        public void ExpireAllSessionsCalledHandler(object s, EventArgs e);
+        private void InitializeComponent();
+        private void loginForm_LoggedInSuccessfully(LoggedInSuccessfullyEventArgs e);
+        protected override void OnLoad(EventArgs e);
+        private void parkingForm_LogoutRequested(object sender, EventArgs e);
+        private void ShowConfigForm(string message);
+        private void ShowLoginForm();
+        private void ShowLoginForm(string message);
+        private void ShowParkingForm(ZoneDto zone);
+        private void ShowUserControlOnTop(UserControl usrCtrl);
+
+        // Properties
+        [ServiceDependency]
+        public ParkingProcessWorkItem WorkItem { private get; set; }
+        [ServiceDependency]
+        public IParkingProxy ParkingProxy { private get; set; }
+        [ServiceDependency]
+        public ILocalStorageService StorageService { private get; set; }
+    }
+
+    internal class UsrLaneLogin : CommonUserControl
+    {
+        // Fields
+        private readonly bool isLeftLane;
+        private BackgroundWorker loginWorker;
+        private LoggedInSucessfullyEventHandler LoggedInSuccessfully;
+        private IContainer components;
+        private Label label2;
+        private Label label1;
+        private CommonTextBox tbxPassword;
+        private CommonTextBox tbxUserName;
+        private Button btnLogin;
+        private Panel panel1;
+        private Panel panel2;
+        private Panel panel3;
+        private Label lblMessage;
+        private BackgroundWorker bgwLoadZones;
+        private Panel pnlMain;
+        private CheckBox cbxConfigAfterLogin;
+
+        // Events
+        public event LoggedInSucessfullyEventHandler LoggedInSuccessfully;
+
+        // Methods
+        public UsrLaneLogin(bool isLeftLane);
+        private void btnLogin_Click(object sender, EventArgs e);
+        private void DisableControls(bool disabled);
+        protected override void Dispose(bool disposing);
+        private void EmptyFields();
+        private void FocusPasswordField();
+        private void FocusUserNameField();
+        private void FocusUserNameOnClick();
+        private void InitializeComponent();
+        private void KeyDownHandler(object s, KeyEventArgs e);
+        private void loginWorker_Completed(object sender, RunWorkerCompletedEventArgs e);
+        private void loginWorker_DoWork(object sender, DoWorkEventArgs e);
+        public void ResetViewToDefault();
+        public void ShowMessage(string message);
+
+        // Properties
+        [ServiceDependency]
+        public IParkingProxy ParkingProxy { private get; set; }
+        [ServiceDependency]
+        public ILocalStorageService StorageService { private get; set; }
+    }
+
+    internal class UsrNotification : CommonUserControl
+    {
+        // Fields
+        private Timer timer;
+        private readonly Color SucceedColor;
+        private readonly Color FailedColor;
+        private readonly Font LargeSizeFont;
+        private readonly Font SmallSizeFont;
+        private IContainer components;
+        private Label label1;
+
+        // Methods
+        public UsrNotification();
+        protected override void Dispose(bool disposing);
+        private void InitializeComponent();
+        public void ShowMessage(NotificationType type, string message);
+        private void timer_Tick(object sender, EventArgs e);
+    }
+
+    internal class UsrParkingLane : CommonUserControl
+    {
+        // Fields
+        private readonly bool ExportListCardToFile;
+        private readonly bool CheckDataCard;
+        private readonly int PercentZoomImageInTop;
+        private readonly int PercentZoomImageInBot;
+        private readonly int PercentZoomImageOutTop;
+        private readonly int PercentZoomImageOutBot;
+        private int cardNumberExportToFile;
+        private readonly bool isLeftLane;
+        private LaneConfigElement configs;
+        private readonly ZoneDto zone;
+        private byte curVehicleType;
+        private byte rollbackVehicleType;
+        private bool curIsDirectionIn;
+        private ParkingInForInProcessDto lastParkingIn;
+        private ParkingInArgs lastParkingInArgs;
+        private ParkingOutArgs lastParkingOutArgs;
+        private readonly object LaneLob;
+        private IVideoSource faceVideoSource;
+        private IVideoSource plateVideoSource;
+        private IReader reader;
+        private IReader readerMCR02;
+        private ILedBoard ledBoard;
+        private bool isShowFeesToLedBoard;
+        private IRecognitionEngine recognitionEngine;
+        private KeyboardHookListener keyListener;
+        private Keys kUp;
+        private Keys kDown;
+        private Keys kConfirm;
+        private Keys kCancel;
+        private Keys kChangeVehicleType;
+        private Keys kSwitchDirection;
+        private Keys kShowCardForm;
+        private Keys kBackspace;
+        private Keys kSetVehicleNumberNull;
+        private Keys kBarrier;
+        private Keys kMotor;
+        private Keys kMotor1;
+        private Keys kMotor2;
+        private Keys kCar;
+        private Keys kCar1;
+        private Keys kCar2;
+        private Keys kBicycle;
+        private Keys kBicycle1;
+        private int lastCancelKeyDownTime;
+        private int lastSwitchDirectionTime;
+        private int lastChangeVehicleTypeTime;
+        private BackgroundWorker bgwProcessParkingIn;
+        private BackgroundWorker bgwGetParkingIn;
+        private BackgroundWorker bgwProcessParkingOut;
+        private BackgroundWorker bgwDeleteParkingIn;
+        private BackgroundWorker bgwUpdateParkingIn;
+        private IOverlayForm curOverlayDialog;
+        private UsrParkingOutReview usrParkingOutReview;
+        private UsrVehicleTypes usrVehicleTypes;
+        private UrsCardNumber usrCardNumber;
+        private UsrVehicleNumber usrVehicleNumber;
+        private UsrNotification usrNotification;
+        private ILedBoard barrier;
+        private bool isShowFeesToBarier;
+        private PrintBill print;
+        private EventHandler LogoutRequested;
+        private IContainer components;
+        private CommonToolStrip miniToolStrip;
+        private Panel pnlParkingLane;
+        private CommonToolStrip commonToolStrip1;
+        private ToolStripLabel lblCurrentStatus;
+        private ToolStripDropDownButton tsbtnTools;
+        private ToolStripMenuItem tsmiChangeVehicleType;
+        private ToolStripMenuItem tsmiSwithDirection;
+        private ToolStripMenuItem tsmiEnterCardNumber;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem tsmiLogout;
+        private TabControl tabControl1;
+        private TabPage tpParkingInfo;
+        private TableLayoutPanel tableLayoutPanel2;
+        private Panel panel6;
+        private Label lblParkingTimeTo;
+        private Label lblParkingTimeFrom;
+        private Label label4;
+        private Panel panel5;
+        private Label lblOrganizationName;
+        private Label lblCustomerName;
+        private Label label2;
+        private Panel panel3;
+        private Label label3;
+        private Panel panel2;
+        private Panel panel4;
+        private Panel panel7;
+        private Label lblZoneName;
+        private Label lblDirection;
+        private TabPage tpDeviceStatus;
+        private Label label8;
+        private Label label7;
+        private Label label6;
+        private Label label5;
+        private Panel pnlCameraArea;
+        private TableLayoutPanel tblCanvases;
+        private Panel pnlPlateImage;
+        private Label lblVehicleNumber;
+        private UsrCameraCanvas plateCanvas;
+        private UsrCameraCanvas faceCanvas;
+        private Panel pnlFaceImage;
+        private Panel pnlMainArea;
+        private Label lblParkingType;
+        private Label label1;
+        private Label lblCardNumber;
+        private Label lblTotalParkingTime;
+        private Label lblVehicleTypeName;
+        private Panel pnlVehicleTypeIcon;
+        private UsrDeviceStatus lblFaceCameraState;
+        private UsrDeviceStatus lblPlateCameraState;
+        private UsrDeviceStatus lblLedboardState;
+        private UsrDeviceStatus lblReaderState;
+        private Label lblVehicleNumberConfirmed;
+        private Label label9;
+        private UsrDeviceStatus lblReaderIPState;
+        private UsrDeviceStatus lblBarrierState;
+        private Label label10;
+        private UsrDeviceStatus lblPrinter;
+        private Label label11;
+        private Panel panel1;
+        private Label lblParkingFees;
+        private Label lbMonthPassMessage;
+
+        // Events
+        public event EventHandler LogoutRequested;
+
+        // Methods
+        public UsrParkingLane(bool isLeftLane, ZoneDto zone);
+        private void AppendToLog(string log);
+        private void barrier_Disconnected(object sender, EventArgs e);
+        private void bgwDeleteParkingIn_Completed(object sender, RunWorkerCompletedEventArgs e);
+        private void bgwDeleteParkingIn_DoWork(object sender, DoWorkEventArgs e);
+        private void bgwGetParkingIn_Completed(object sender, RunWorkerCompletedEventArgs e);
+        private void bgwGetParkingIn_DoWork(object sender, DoWorkEventArgs e);
+        private void bgwProcessParkingIn_Completed(object sender, RunWorkerCompletedEventArgs e);
+        private void bgwProcessParkingIn_DoWork(object sender, DoWorkEventArgs e);
+        private void bgwProcessParkingOut_Completed(object sender, RunWorkerCompletedEventArgs e);
+        private void bgwProcessParkingOut_DoWork(object sender, DoWorkEventArgs e);
+        private void bgwUpdateParkingIn_Completed(object sender, RunWorkerCompletedEventArgs e);
+        private void bgwUpdateParkingIn_DoWork(object sender, DoWorkEventArgs e);
+        private void canvas_StartRequested(object sender, EventArgs e);
+        private void canvas_StopRequested(object sender, EventArgs e);
+        private void ChangeVehicleType(byte newVehicleType);
+        private void ClearParkingInfoOnView();
+        private void ClearSampleData();
+        private void ConnectBarrier();
+        private void ConnectLedBoard();
+        private void ConnectReaderAndWaitForCard();
+        private void ConnectReaderIPAndWaitForCard();
+        private Image Crop(Image img, int percent);
+        private void DeleteParkingIn();
+        private void DisconnectBarrier(bool isDisconnectdByUser);
+        private void DisconnectLedBoard(bool isDisconnectdByUser);
+        protected override void Dispose(bool disposing);
+        private void DisposeVideoSourceInNewThread(IVideoSource videoSource, bool join);
+        private void dlgCardNumber_ConfirmKeyDown(object sender, EventArgs e);
+        private void EnableKeyListener(bool isEnabled);
+        private CameraPairConfigElement GetCameraConfigs();
+        private string GetCurrentSessionId();
+        private void InitializeComponent();
+        private bool IsLaneBusy();
+        private bool IsProcessCarWithoutCard();
+        private void keyListener_KeyDown(object sender, KeyEventArgs e);
+        private void lblBarrierState_ItemConnectClicked(object sender, EventArgs e);
+        private void lblBarrierState_ItemDisconnectClicked(object sender, EventArgs e);
+        private void lblFaceCameraState_ItemConnectClicked(object sender, EventArgs e);
+        private void lblFaceCameraState_ItemDisconnectClicked(object sender, EventArgs e);
+        private void lblLedboardState_ItemConnectClicked(object sender, EventArgs e);
+        private void lblLedboardState_ItemDisconnectClicked(object sender, EventArgs e);
+        private void lblPlateCameraState_ItemConnectClicked(object sender, EventArgs e);
+        private void lblPlateCameraState_ItemDisconnectClicked(object sender, EventArgs e);
+        private void lblPrinter_ItemConnectClicked(object sender, EventArgs e);
+        private void lblPrinter_ItemDisconnectClicked(object sender, EventArgs e);
+        private void lblReaderIPState_ItemConnectClicked(object sender, EventArgs e);
+        private void lblReaderIPState_ItemDisconnectClicked(object sender, EventArgs e);
+        private void lblReaderState_ItemConnectClicked(object sender, EventArgs e);
+        private void lblReaderState_ItemDisconnectClicked(object sender, EventArgs e);
+        private void ledBoard_Disconnected(object sender, EventArgs e);
+        protected override void OnLoad(EventArgs e);
+        public void ParkingProcessing(long cardId, bool isReaderUsed, bool isFree);
+        private void PlayVideoSourceInNewThread(IVideoSource videoSource);
+        private void PlayVideoSourceOnCanvas(UsrCameraCanvas canvas);
+        private void pnlWorkingArea_SizeChanged(object sender, EventArgs e);
+        private void PopulateConfigsToView();
+        private void PrinterWaiting();
+        private void ProcessChangeVehicleTypeKeyDown();
+        private void ProcessChangeVehicleTypeKeyDown(byte vehicleType);
+        private void reader_Disconnected();
+        private void reader_TagDetected(byte[] cardId, bool isFree);
+        private void readerMCR02_Disconnected();
+        private void readerMCR02_TagDetected(byte[] cardId, bool isFree);
+        private void SetShortcutKey();
+        private void SetupAndPlayVideoSource(ref IVideoSource videoSource, UsrCameraCanvas canvas, UsrDeviceStatus videoSourceLabel, CameraConnectionType conntype, string source);
+        private void ShowCardNumberForm();
+        private void ShowFormSelectVehicleTypes();
+        private void ShowParkingInfoOnView(ParkingInForInProcessDto parkingIn);
+        private void ShowParkingInfoOnView(ParkingOutForOutProcessDto parkingOut);
+        private void ShowParkingOutReviewForm(UsrParkingOutReviewArgs args);
+        private void ShowVehicleNumberForm(Image plateImage, string vehicleNumber, VehicleNumberFormPostAction postAction, string errorMessage);
+        private void StartParkingInProcess(ParkingInArgs args);
+        private void StartParkingOutProcess(ParkingOutReviewArgs args);
+        private void StopVideoSourceInNewThread(IVideoSource videoSource, bool join);
+        private void SwitchDirection();
+        private void UpdateParkingInfoOnView(ParkingInUpdatedDto parkingIn);
+        private void UpdateParkingInVehicleNumber(string newVehicleNumber);
+        private void UpdateViewAssociateDirection();
+        private void UpdateViewAssociateVehicleType();
+        private void usrParkingOutReview_ConfirmKeyDown(object sender, EventArgs e);
+        private void usrVehicleNumber_ConfirmKeyDown(object sender, EventArgs e);
+        private void usrVehicleTypes_VehicleTypeSelected(object sender, EventArgs e);
+        private void videoSource_Played(VideoSourceEventArgs e);
+        private void videoSource_Stopped(VideoSourceEventArgs e);
+
+        // Properties
+        [ServiceDependency]
+        public ParkingProcessWorkItem WorkItem { private get; set; }
+        [ServiceDependency]
+        public IParkingProxy ParkingProxy { private get; set; }
+        [ServiceDependency]
+        public ILocalStorageService StorageService { private get; set; }
+    }
+
+    internal class UsrParkingOutReview : UsrPopupDialog, IOverlayForm
+    {
+        // Fields
+        private readonly string HintFormat;
+        private ILocalStorageService storageService;
+        private KeysConverter kc;
+        private Keys kUp;
+        private Keys kDown;
+        private Keys kConfirm;
+        private Keys kCancel;
+        private Keys kBackspace;
+        private Keys kSetVehicleNumberNull;
+        private List<Keys> kNumbers;
+        private bool isPreferInVehicleNumber;
+        private bool isInVehicleNumberConfirmed;
+        private bool isShowVehicleNumberConfirmed;
+        private bool isIgnoreVehicleNumber;
+        private bool isOutVehicleNumberUpdated;
+        private readonly int PercentZoomImageInTop;
+        private readonly int PercentZoomImageInBot;
+        private readonly int PercentZoomImageOutTop;
+        private readonly int PercentZoomImageOutBot;
+        private EventHandler ConfirmKeyDown;
+        private IContainer components;
+        private Label label1;
+        private Label lblHint;
+        private Label lbFees;
+        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel tableLayoutPanel3;
+        private Label lblOutVehicleNumber;
+        private PictureBox pbxOutPlateImage;
+        private Label label4;
+        private Panel pnlOutFaceImage;
+        private ListBox lstVehicleNumbers;
+        private TableLayoutPanel tableLayoutPanel2;
+        private Label lblInVehicleNumber;
+        private PictureBox pbxInFaceImage;
+        private Label label3;
+        private Panel pnlInPlateImage;
+        private Label lblVehicleNumberConfirmed;
+
+        // Events
+        public event EventHandler ConfirmKeyDown;
+
+        // Methods
+        public UsrParkingOutReview(ILocalStorageService storageService, bool isLeftLane, Keys kUp, Keys kDown, Keys kConfirm, Keys kCancel, Keys kBackspace, Keys kSetVehicleNumberNull, bool isIgnoreVehicleNumber, bool isShowVehicleNumberConfirmed);
+        private Image Crop(Image img, int percent);
+        protected override void Dispose(bool disposing);
+        public string GetOutVehicleNumber();
+        public void HandleKeyDown(object sender, KeyEventArgs e);
+        private void InitializeComponent();
+        private void lblOutVehicleNumber_TextChanged(object sender, EventArgs e);
+        private void lstVehicleNumbers_DrawItem(object sender, DrawItemEventArgs e);
+        private void pbxInFaceImage_Paint(object sender, PaintEventArgs e);
+        private void pbxInPlateImage_Paint(object sender, PaintEventArgs e);
+        private void pbxOutPlateImage_Paint(object sender, PaintEventArgs e);
+        private void pnlOutFaceImage_Paint(object sender, PaintEventArgs e);
+        public void SetArguments(UsrParkingOutReviewArgs data);
+
+        // Properties
+        bool IOverlayForm.Visible { get; }
+    }
+
+    internal class UsrParkingOutReviewArgs
+    {
+        // Methods
+        public UsrParkingOutReviewArgs();
+
+        // Properties
+        public bool IsPreferInVehicleNumber { get; set; }
+        public Image InFaceImage { get; set; }
+        public Image InPlateImage { get; set; }
+        public string InVehicleNumber { get; set; }
+        public bool IsInVehicleNumberConfirmed { get; set; }
+        public Image OutFaceImage { get; set; }
+        public Image OutPlateImage { get; set; }
+        public string OutVehicleNumber { get; set; }
+        public long Fees { get; set; }
+    }
+
+    internal class UsrPopupDialog : CommonUserControl
+    {
+        // Fields
+        private Panel _container;
+
+        // Methods
+        public UsrPopupDialog();
+        protected virtual void CloseDialog();
+        public virtual void ShowDialog(Panel container, Point location, bool isFull);
+    }
+
+    internal class UsrVehicleNumber : UsrPopupDialog, IOverlayForm
+    {
+        // Fields
+        private readonly string HintFormat;
+        private ILocalStorageService storageService;
+        private KeysConverter kc;
+        private Keys kUp;
+        private Keys kDown;
+        private Keys kConfirm;
+        private Keys kCancel;
+        private Keys kBackspace;
+        private Keys kClearVehicleNumber;
+        private List<Keys> kNumbers;
+        private bool vehicleNumberChanged;
+        private EventHandler ConfirmKeyDown;
+        private IContainer components;
+        private Label label1;
+        private Label lblHint;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Panel panel2;
+        private PictureBox pbxPlateImage;
+        private Label lblMessage;
+        private ListBox lstVehicleNumbers;
+        private Label lblVehicleNumber;
+
+        // Events
+        public event EventHandler ConfirmKeyDown;
+
+        // Methods
+        public UsrVehicleNumber(ILocalStorageService storageService, bool isLeftLane, Keys kUp, Keys kDown, Keys kConfirm, Keys kCancel, Keys kBackspace, Keys kClearVehicleNumber);
+        protected override void Dispose(bool disposing);
+        public void HandleKeyDown(object sender, KeyEventArgs e);
+        private void InitializeComponent();
+        private void lblVehicleNumber_TextChanged(object sender, EventArgs e);
+        private void lstVehicleNumbers_DrawItem(object sender, DrawItemEventArgs e);
+        protected override void OnSizeChanged(EventArgs e);
+        private void pbxPlateImage_Paint(object sender, PaintEventArgs e);
+
+        // Properties
+        public VehicleNumberFormPostAction PostAction { get; set; }
+        public string VehicleNumber { get; set; }
+        public Image PlateImage { set; }
+        public string ErrorMessage { set; }
+        bool IOverlayForm.Visible { get; }
+    }
+
+    internal class UsrVehicleTypes : UsrPopupDialog, IOverlayForm
+    {
+        // Fields
+        private KeysConverter keysConverter;
+        private string KeyHintFormat;
+        private readonly Keys kSelect;
+        private readonly Keys kCancel;
+        private readonly Keys kUp;
+        private readonly Keys kDown;
+        private EventHandler VehicleTypeSelected;
+        private IContainer components;
+        private Label label1;
+        private Label lblKeyHint;
+        private ListBox lstVehicleTypes;
+
+        // Events
+        internal event EventHandler VehicleTypeSelected;
+
+        // Methods
+        public UsrVehicleTypes(Keys kUp, Keys kDown, Keys kSelect, Keys kCancel);
+        protected override void Dispose(bool disposing);
+        public void HandleKeyDown(object sender, KeyEventArgs e);
+        private void InitializeComponent();
+
+        // Properties
+        public byte SelectedVehicleType { get; }
+        public List<VehicleType> VehicleTypes { set; }
+        bool IOverlayForm.Visible { get; }
+    }
+
+    internal enum VehicleNumberFormPostAction
+    {
+        ProcessParkingIn,
+        UpdateParkingIn,
+        ProcessParkingOutOtoNotCard
+    }
+}
+
+ 
+Collapse Types
+ 

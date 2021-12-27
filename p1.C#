@@ -1,0 +1,238 @@
+namespace ParkingProcessComponent.Config
+{
+    internal class BarrierConfigElement : ConfigurationElement
+    {
+        // Methods
+        public BarrierConfigElement();
+        public bool CheckConfigsOK();
+
+        // Properties
+        [ConfigurationProperty("enable", DefaultValue="NO", IsRequired=true), RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$")]
+        private string enable { get; set; }
+        public bool Enable { get; set; }
+        [ConfigurationProperty("command", IsRequired=true)]
+        public string Command { get; set; }
+        [IntegerValidator, ConfigurationProperty("port", IsRequired=true)]
+        public int Port { get; set; }
+        [IntegerValidator, ConfigurationProperty("baudRate", IsRequired=true)]
+        public int BaudRate { get; set; }
+    }
+
+    internal class CameraPairConfigElement : ConfigurationElement
+    {
+        // Methods
+        public CameraPairConfigElement();
+        public bool CheckConfigsOK();
+
+        // Properties
+        [ConfigurationProperty("enable", DefaultValue="NO", IsRequired=true), RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$")]
+        private string enable { get; set; }
+        public bool Enable { get; set; }
+        [ConfigurationProperty("face_type", IsRequired=true), IntegerValidator]
+        public int FaceType { get; set; }
+        [ConfigurationProperty("face_address", IsRequired=true)]
+        public string FaceAddress { get; set; }
+        [IntegerValidator, ConfigurationProperty("plate_type", IsRequired=true)]
+        public int PlateType { get; set; }
+        [ConfigurationProperty("plate_address", IsRequired=true)]
+        public string PlateAddress { get; set; }
+    }
+
+    internal class LaneConfigElement : ConfigurationElement
+    {
+        // Methods
+        public LaneConfigElement();
+        public bool CheckConfigsOK();
+
+        // Properties
+        [RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$"), ConfigurationProperty("is_reader_used", DefaultValue="YES", IsRequired=true)]
+        private string is_reader_used { get; set; }
+        public bool IsReaderUsed { get; set; }
+        [ConfigurationProperty("is_reader_ip_used", DefaultValue="YES", IsRequired=true), RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$")]
+        private string is_reader_ip_used { get; set; }
+        public bool IsReaderIpUsed { get; set; }
+        [ConfigurationProperty("is_first_run", DefaultValue="YES", IsRequired=true), RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$")]
+        private string is_first_run { get; set; }
+        public bool IsFirstRun { get; set; }
+        [ConfigurationProperty("zone_id", DefaultValue="", IsRequired=true)]
+        private string zone_id { get; set; }
+        public long? ZoneId { get; set; }
+        [RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$"), ConfigurationProperty("dont_ask_for_zone_later", DefaultValue="NO", IsRequired=true)]
+        private string dont_ask_for_zone_later { get; set; }
+        [RegexStringValidator("^(In|IN|in|Out|oUt|ouT|OUt|OuT|oUT|OUT|out)$"), ConfigurationProperty("direction", DefaultValue="IN", IsRequired=true)]
+        private string direction { get; set; }
+        public bool IsDirectionIn { get; set; }
+        [ConfigurationProperty("enable_switch_direction", DefaultValue="YES", IsRequired=true), RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$")]
+        private string enable_switch_direction { get; set; }
+        public bool EnableSwitchDirection { get; set; }
+        [ConfigurationProperty("default_vehicle_type", IsRequired=true)]
+        private string default_vehicle_type { get; set; }
+        public int DefaultVehicleType { get; set; }
+        [ConfigurationProperty("allowed_vehicle_types", DefaultValue="", IsRequired=true)]
+        private string allowed_vehicle_types { get; set; }
+        public List<byte> AllowedVehicleTypes { get; set; }
+        [RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$"), ConfigurationProperty("show_vehicle_number_confirmed", DefaultValue="NO", IsRequired=true)]
+        private string show_vehicle_number_confirmed { get; set; }
+        public bool ShowVehicleNumberConfirmed { get; set; }
+        [RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$"), ConfigurationProperty("disable_deleted_parking_in", DefaultValue="NO", IsRequired=true)]
+        private string disable_deleted_parking_in { get; set; }
+        public bool DisableDeletedParkingIn { get; set; }
+        [ConfigurationProperty("rollback_vehicle_type", DefaultValue="NO", IsRequired=true), RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$")]
+        private string rollback_vehicle_type { get; set; }
+        public bool EnableRollbackVehicleType { get; set; }
+        [ConfigurationProperty("barrier", IsRequired=true)]
+        public BarrierConfigElement Barrier { get; set; }
+        [ConfigurationProperty("reader", IsRequired=true)]
+        public ReaderConfigElement Reader { get; set; }
+        [ConfigurationProperty("reader_ip", IsRequired=true)]
+        public ReaderIPConfigElement ReaderIP { get; set; }
+        [ConfigurationProperty("led_board", IsRequired=true)]
+        public LedBoardConfigElement LedBoard { get; set; }
+        [ConfigurationProperty("camera_pair_in_motor", IsRequired=true)]
+        public CameraPairConfigElement CameraPairInMotor { get; set; }
+        [ConfigurationProperty("camera_pair_out_motor", IsRequired=true)]
+        public CameraPairConfigElement CameraPairOutMotor { get; set; }
+        [ConfigurationProperty("camera_pair_in_car", IsRequired=true)]
+        public CameraPairConfigElement CameraPairInCar { get; set; }
+        [ConfigurationProperty("camera_pair_out_car", IsRequired=true)]
+        public CameraPairConfigElement CameraPairOutCar { get; set; }
+        [ConfigurationProperty("shortcut_keys", IsRequired=true)]
+        public ShortcutKeysConfigElement ShortcutKeys { get; set; }
+        [ConfigurationProperty("reader_hid", IsRequired=true)]
+        public ReaderHidConfigElement ReaderHid { get; set; }
+    }
+
+    internal class LaneConfigSection : ConfigurationSection
+    {
+        // Fields
+        private const string SectionName = "lanes";
+        private static LaneConfigSection instance;
+        private static readonly object lob;
+        private static string configFilePath;
+
+        // Methods
+        static LaneConfigSection();
+        public LaneConfigSection();
+        public static LaneConfigSection GetInstance();
+        public void Save();
+
+        // Properties
+        [ConfigurationProperty("left_lane", IsRequired=true)]
+        public LaneConfigElement LeftLane { get; set; }
+        [ConfigurationProperty("right_lane", IsRequired=true)]
+        public LaneConfigElement RightLane { get; set; }
+    }
+
+    internal class LedBoardConfigElement : ConfigurationElement
+    {
+        // Methods
+        public LedBoardConfigElement();
+        public bool CheckConfigsOK();
+
+        // Properties
+        [RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$"), ConfigurationProperty("enable", DefaultValue="NO", IsRequired=true)]
+        private string enable { get; set; }
+        public bool Enable { get; set; }
+        [ConfigurationProperty("type", IsRequired=true), IntegerValidator]
+        public int Type { get; set; }
+        [IntegerValidator, ConfigurationProperty("address", IsRequired=true)]
+        public int Address { get; set; }
+        [IntegerValidator, ConfigurationProperty("baud_rate", IsRequired=true)]
+        public int BaudRate { get; set; }
+        [RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$"), ConfigurationProperty("auto_reset_display_value", DefaultValue="YES", IsRequired=true)]
+        private string auto_reset_display_value { get; set; }
+        public bool AutoResetDisplayValue { get; set; }
+        [IntegerValidator, ConfigurationProperty("reset_delay_time", IsRequired=true)]
+        public int ResetDelayTime { get; set; }
+    }
+
+    internal class ReaderConfigElement : ConfigurationElement
+    {
+        // Methods
+        public ReaderConfigElement();
+        public bool CheckConfigsOK();
+
+        // Properties
+        [ConfigurationProperty("type", IsRequired=true), IntegerValidator]
+        public int Type { get; set; }
+        [IntegerValidator, ConfigurationProperty("address", IsRequired=true)]
+        public int Address { get; set; }
+        [ConfigurationProperty("beep_on_tag", DefaultValue="YES", IsRequired=true), RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$")]
+        private string beep_on_tag { get; set; }
+        public bool BeepOnTagDetected { get; set; }
+    }
+
+    internal class ReaderHidConfigElement : ConfigurationElement
+    {
+        // Methods
+        public ReaderHidConfigElement();
+
+        // Properties
+        [ConfigurationProperty("enable", DefaultValue="NO", IsRequired=true), RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$")]
+        private string enable { get; set; }
+        public bool Enable { get; set; }
+        [ConfigurationProperty("reader_name", DefaultValue="", IsRequired=true)]
+        public string ReaderName { get; set; }
+    }
+
+    internal class ReaderIPConfigElement : ConfigurationElement
+    {
+        // Methods
+        public ReaderIPConfigElement();
+
+        // Properties
+        [ConfigurationProperty("enable", DefaultValue="NO", IsRequired=true), RegexStringValidator("^(Yes|yEs|yeS|YEs|YeS|yES|YES|yes|No|NO|no)$")]
+        private string enable { get; set; }
+        public bool Enable { get; set; }
+        [IntegerValidator, ConfigurationProperty("port", IsRequired=true)]
+        public int Port { get; set; }
+    }
+
+    internal class ShortcutKeysConfigElement : ConfigurationElement
+    {
+        // Methods
+        public ShortcutKeysConfigElement();
+
+        // Properties
+        [ConfigurationProperty("key_confirm", IsRequired=true), IntegerValidator]
+        public int KeyConfirm { get; set; }
+        [IntegerValidator, ConfigurationProperty("key_cancel", IsRequired=true)]
+        public int KeyCancel { get; set; }
+        [ConfigurationProperty("key_set_vehicle_number_null", IsRequired=true), IntegerValidator]
+        public int KeySetVehicleNumberNull { get; set; }
+        [IntegerValidator, ConfigurationProperty("key_change_vehicle_type", IsRequired=true)]
+        public int KeyChangeVehicleType { get; set; }
+        [ConfigurationProperty("key_show_card_form", IsRequired=true), IntegerValidator]
+        public int KeyShowCardForm { get; set; }
+        [ConfigurationProperty("key_switch_direction", IsRequired=true), IntegerValidator]
+        public int KeySwitchDirection { get; set; }
+        [IntegerValidator, ConfigurationProperty("key_up", IsRequired=true)]
+        public int KeyUp { get; set; }
+        [IntegerValidator, ConfigurationProperty("key_down", IsRequired=true)]
+        public int KeyDown { get; set; }
+        [IntegerValidator, ConfigurationProperty("key_backspace", IsRequired=true)]
+        public int KeyBackspace { get; set; }
+        [IntegerValidator, ConfigurationProperty("key_open_barrier", IsRequired=true)]
+        public int KeyOpenBarrier { get; set; }
+        [ConfigurationProperty("key_choose_motor", IsRequired=true), IntegerValidator]
+        public int KeyChooseMotor { get; set; }
+        [IntegerValidator, ConfigurationProperty("key_choose_motor1", IsRequired=true)]
+        public int KeyChooseMotor1 { get; set; }
+        [ConfigurationProperty("key_choose_motor2", IsRequired=true), IntegerValidator]
+        public int KeyChooseMotor2 { get; set; }
+        [IntegerValidator, ConfigurationProperty("key_choose_car", IsRequired=true)]
+        public int KeyChooseCar { get; set; }
+        [ConfigurationProperty("key_choose_car1", IsRequired=true), IntegerValidator]
+        public int KeyChooseCar1 { get; set; }
+        [IntegerValidator, ConfigurationProperty("key_choose_car2", IsRequired=true)]
+        public int KeyChooseCar2 { get; set; }
+        [ConfigurationProperty("key_choose_bicycle", IsRequired=true), IntegerValidator]
+        public int KeyChooseBicycle { get; set; }
+        [ConfigurationProperty("key_choose_bicycle1", IsRequired=true), IntegerValidator]
+        public int KeyChooseBicycle1 { get; set; }
+    }
+}
+
+ 
+Collapse Types
+ 

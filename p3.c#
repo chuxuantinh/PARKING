@@ -1,0 +1,90 @@
+namespace ParkingProcessComponent.Device.Led
+{
+    internal sealed class BarrierFactory
+    {
+        // Fields
+        private static BarrierFactory instance;
+        private static readonly object lob;
+        private static Dictionary<byte, ILedBoard> ledBoardConnections;
+
+        // Methods
+        static BarrierFactory();
+        private BarrierFactory();
+        public static BarrierFactory GetInstance();
+        public ILedBoard Register(byte portAddress, int baudRate, bool isAutoResetDisplayValue, int resetDelayTime);
+    }
+
+    internal interface ILedBoard
+    {
+        // Events
+        event EventHandler Disconnected;
+
+        // Methods
+        bool Connect();
+        void Disconnect();
+        void SendOpenBarrier(string command);
+        void ShowParkingFee(uint fees);
+    }
+
+    internal sealed class LedBoardFactory
+    {
+        // Fields
+        private static LedBoardFactory instance;
+        private static readonly object lob;
+        private static Dictionary<byte, ILedBoard> ledBoardConnections;
+
+        // Methods
+        static LedBoardFactory();
+        private LedBoardFactory();
+        public static LedBoardFactory GetInstance();
+        public ILedBoard Register(byte portAddress, int baudRate, bool isAutoResetDisplayValue, int resetDelayTime);
+    }
+
+    internal class SerialLedBoard : ILedBoard
+    {
+        // Fields
+        private const int LedBoardWriteTimeOut = 0xbb8;
+        private SerialPort port;
+        private int maxDisplayLength;
+        private static readonly object ConnectionLob;
+        private int nConnection;
+        private Thread th_CheckPortOpened;
+        private bool flg_CheckPortOpened;
+        private Timer resetTimer;
+        private bool isAutoResetDisplayedText;
+        private int resetDelayTime;
+        private EventHandler Disconnected;
+
+        // Events
+        public event EventHandler Disconnected;
+
+        // Methods
+        static SerialLedBoard();
+        public SerialLedBoard(byte portAddress, int baudRate, bool isAutoResetDisplayedText, int resetDelayTime);
+        private void CheckPortOpenedWorker();
+        public bool Connect();
+        public void Disconnect();
+        private void resetTimer_Tick(object sender, EventArgs e);
+        public void SendOpenBarrier(string command);
+        public void ShowParkingFee(uint fees);
+        private void StopCheckPortOpenedWorker();
+        private void WriteToBarrier(string command);
+        private void WriteToLedBoard(uint fees);
+    }
+
+    public static class SerialPortUtils
+    {
+        // Fields
+        private const int dwFlagsAndAttributes = 0x4000_0000;
+
+        // Methods
+        public static bool CheckIfPortOpened(string portName);
+        public static bool CheckIfPortValid(string portName);
+        [DllImport("kernel32.dll", CharSet=CharSet.Auto, SetLastError=true)]
+        internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr securityAttrs, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
+    }
+}
+
+ 
+Collapse Types
+ 

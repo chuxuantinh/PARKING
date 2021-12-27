@@ -1,0 +1,1024 @@
+public class UsrCardList : CommonUserControl
+{
+    // Fields
+    private DataTable dtblCards;
+    private List<CardDto> loadedCards;
+    private CardFilterDto cardFilter;
+    private PagingType pagingType;
+    private int recordsPerPage;
+    private FrmImportCardFromFile frmImportCardFromFile;
+    private CardMgtWorkItem cardWorkItem;
+    private IParkingProxy parkingProxy;
+    private ILocalStorageService storageService;
+    private IContainer components;
+    private HideableGroupBox hideableGroupBox1;
+    private Panel panel1;
+    private Panel panel2;
+    private PagingPanel pagingPanel1;
+    private CommonDataGridView dgvCardList;
+    private CommonToolStrip tsCardFunctions;
+    private ToolStripDropDownButton tsbtnImportCards;
+    private ToolStripMenuItem tsmiImportCardsFromFile;
+    private ToolStripMenuItem tsmiImportCardsUsingReader;
+    private ToolStripButton tsbtnChangeCardLogicalType;
+    private ToolStripButton tsbtnRemoveCards;
+    private Panel panel3;
+    private Button btnLoadCards;
+    private FlowLayoutPanel flowLayoutPanel1;
+    private BackgroundWorker loadCardWorker;
+    private ContextMenuStrip ctxCardFunctions;
+    private ToolStripMenuItem ctxmiChangeCardLogicalType;
+    private ToolStripMenuItem ctxmiRemoveCard;
+    private ToolStripDropDownButton tsbtnChangeCardStatus;
+    private ToolStripMenuItem tsmiMarkCardBroken;
+    private ToolStripMenuItem tsmiUnmarkCardBroken;
+    private ToolStripSeparator toolStripSeparator1;
+    private ToolStripMenuItem tsmiMarkCardLost;
+    private ToolStripMenuItem tsmiUnmarkCardLost;
+    private ToolStripSeparator toolStripSeparator2;
+    private ToolStripMenuItem tsmiLockCard;
+    private ToolStripMenuItem tsmiUnlockCard;
+    private ToolStripMenuItem ctxmiMarkCardBroken;
+    private ToolStripMenuItem ctxmiUnmarkCardBroken;
+    private ToolStripSeparator toolStripSeparator5;
+    private ToolStripMenuItem ctxmiMarkCardLost;
+    private ToolStripMenuItem ctxmiUnmarkCardLost;
+    private ToolStripSeparator toolStripSeparator4;
+    private ToolStripMenuItem ctxmiLockCard;
+    private ToolStripMenuItem ctxmiUnlockCard;
+    private ToolStripSeparator toolStripSeparator3;
+    private Button btnClearAll;
+    private Panel panel5;
+    private Panel panel6;
+    private Label label2;
+    private ComboBox cmbCardLogicalTypes;
+    private Panel panel4;
+    private DigitOnlyTextBox tbxCardNumber;
+    private Label label1;
+    private OpenFileDialog openFileDialog1;
+    private ToolStripButton tsbtnExportToFile;
+    private DataGridViewTextBoxColumn colCardId;
+    private DataGridViewTextBoxColumn colCardNumber;
+    private DataGridViewTextBoxColumn colPhysicalType;
+    private DataGridViewTextBoxColumn colLogicalType;
+    private DataGridViewTextBoxColumn colPhysicalStatus;
+    private DataGridViewTextBoxColumn colLogicalStatus;
+    private DataGridViewTextBoxColumn colImportedDate;
+    private DataGridViewTextBoxColumn colBlank;
+    private ToolTip toolTip1;
+
+    // Methods
+    public UsrCardList([ServiceDependency] CardMgtWorkItem workItem, [ServiceDependency] IParkingProxy parkingProxy, [ServiceDependency] ILocalStorageService storageService)
+    {
+        EventHandler handler = null;
+        EventHandler handler2 = null;
+        EventHandler handler3 = null;
+        EventHandler handler4 = null;
+        EventHandler handler5 = null;
+        EventHandler handler6 = null;
+        EventHandler handler7 = null;
+        EventHandler handler8 = null;
+        EventHandler handler9 = null;
+        EventHandler handler10 = null;
+        EventHandler handler11 = null;
+        EventHandler handler12 = null;
+        EventHandler handler13 = null;
+        EventHandler handler14 = null;
+        EventHandler handler15 = null;
+        EventHandler handler16 = null;
+        this.recordsPerPage = LocalConfigsManager.Instance.RecordsPerPages;
+        this.InitializeComponent();
+        this.colCardId.DefaultCellStyle.Format = "N0";
+        this.colCardId.DefaultCellStyle.FormatProvider = DataGeneralFormat.VietnameseCultureInfo;
+        this.colCardNumber.DefaultCellStyle.Format = "N0";
+        this.colCardNumber.DefaultCellStyle.FormatProvider = DataGeneralFormat.VietnameseCultureInfo;
+        this.cardWorkItem = workItem;
+        this.parkingProxy = parkingProxy;
+        this.storageService = storageService;
+        this.loadCardWorker.DoWork += new DoWorkEventHandler(this.loadCardWorker_DoWork);
+        this.loadCardWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.loadCardWorker_Completed);
+        this.btnLoadCards.Click += new EventHandler(this.btnLoadCards_Click);
+        this.btnClearAll.Click += new EventHandler(this.btnClearAll_Click);
+        this.tsmiImportCardsFromFile.Click += new EventHandler(this.tsmiImportCardsFromFile_Click);
+        this.tsmiImportCardsUsingReader.Click += new EventHandler(this.tsmiImportCardsUsingReader_Click);
+        if (handler == null)
+        {
+            handler = (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_MARK_BROKEN);
+        }
+        this.tsmiMarkCardBroken.Click += handler;
+        handler2 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_UNMARK_BROKEN);
+        this.tsmiUnmarkCardBroken.Click += handler2;
+        handler3 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_MARK_LOST);
+        this.tsmiMarkCardLost.Click += handler3;
+        handler4 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_UNMARK_LOST);
+        this.tsmiUnmarkCardLost.Click += handler4;
+        handler5 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_LOCK);
+        this.tsmiLockCard.Click += handler5;
+        handler6 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_UNLOCK);
+        this.tsmiUnlockCard.Click += handler6;
+        handler7 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_CHANGE_LOGICAL_TYPE);
+        this.tsbtnChangeCardLogicalType.Click += handler7;
+        handler8 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_REMOVE);
+        this.tsbtnRemoveCards.Click += handler8;
+        this.tsbtnExportToFile.Click += new EventHandler(this.tsbtnExportToFile_Click);
+        handler9 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_MARK_BROKEN);
+        this.ctxmiMarkCardBroken.Click += handler9;
+        handler10 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_UNMARK_BROKEN);
+        this.ctxmiUnmarkCardBroken.Click += handler10;
+        handler11 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_MARK_LOST);
+        this.ctxmiMarkCardLost.Click += handler11;
+        handler12 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_UNMARK_LOST);
+        this.ctxmiUnmarkCardLost.Click += handler12;
+        handler13 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_LOCK);
+        this.ctxmiLockCard.Click += handler13;
+        handler14 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_UNLOCK);
+        this.ctxmiUnlockCard.Click += handler14;
+        handler15 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_CHANGE_LOGICAL_TYPE);
+        this.ctxmiChangeCardLogicalType.Click += handler15;
+        handler16 ??= (s, e) => this.HandleCommonCardFuntion(Function.FUNC_CARD_REMOVE);
+        this.ctxmiRemoveCard.Click += handler16;
+        this.pagingPanel1.NavigationLinkClicked += new PagingPanelNavigationLinkClickedEventHandler(this.pagingPanel1_NavigationLinkClicked);
+        this.dgvCardList.MouseDown += new MouseEventHandler(this.dgvCardList_MouseDown);
+        SessionDto adminSession = storageService.AdminSession;
+        if (!adminSession.IsRoot)
+        {
+            this.btnLoadCards.Enabled = this.btnLoadCards.Visible = adminSession.Permissions.Contains((long) 0x65);
+            this.tsbtnImportCards.Enabled = this.tsbtnImportCards.Visible = adminSession.Permissions.Contains((long) 0x66);
+            int num = 0;
+            if (adminSession.Permissions.Contains((long) 0x6c))
+            {
+                num++;
+            }
+            else
+            {
+                this.tsmiMarkCardBroken.Enabled = this.tsmiMarkCardBroken.Visible = false;
+            }
+            if (adminSession.Permissions.Contains((long) 0x6d))
+            {
+                num++;
+            }
+            else
+            {
+                this.tsmiUnmarkCardBroken.Enabled = this.tsmiUnmarkCardBroken.Visible = false;
+            }
+            if (adminSession.Permissions.Contains((long) 0x6a))
+            {
+                num++;
+            }
+            else
+            {
+                this.tsmiMarkCardLost.Enabled = this.tsmiMarkCardLost.Visible = false;
+            }
+            if (adminSession.Permissions.Contains((long) 0x6b))
+            {
+                num++;
+            }
+            else
+            {
+                this.tsmiUnmarkCardLost.Enabled = this.tsmiUnmarkCardLost.Visible = false;
+            }
+            if (adminSession.Permissions.Contains((long) 0x68))
+            {
+                num++;
+            }
+            else
+            {
+                this.tsmiLockCard.Enabled = this.tsmiLockCard.Visible = false;
+            }
+            if (adminSession.Permissions.Contains((long) 0x69))
+            {
+                num++;
+            }
+            else
+            {
+                this.tsmiUnlockCard.Enabled = this.tsmiUnlockCard.Visible = false;
+            }
+            if (num == 0)
+            {
+                this.tsbtnChangeCardStatus.Enabled = this.tsbtnChangeCardStatus.Visible = false;
+            }
+            this.tsbtnChangeCardLogicalType.Enabled = this.tsbtnChangeCardLogicalType.Visible = adminSession.Permissions.Contains((long) 0x67);
+            this.tsbtnRemoveCards.Enabled = this.tsbtnRemoveCards.Visible = adminSession.Permissions.Contains((long) 110);
+        }
+    }
+
+    private void btnClearAll_Click(object sender, EventArgs e)
+    {
+        this.tbxCardNumber.Text = string.Empty;
+        this.cmbCardLogicalTypes.SelectedIndex = 0;
+    }
+
+    private void btnLoadCards_Click(object sender, EventArgs e)
+    {
+        this.LoadCards(PagingType.First);
+    }
+
+    private CardFilterDto CollectCardFilterData()
+    {
+        int num;
+        byte num2;
+        CardFilterDto dto = new CardFilterDto {
+            IsExcludeRemovedCards = true
+        };
+        if ((this.tbxCardNumber.Text.Length != 0) && int.TryParse(this.tbxCardNumber.Text, out num))
+        {
+            dto.IsFilterByCardNumber = true;
+            dto.CardNumber = num;
+        }
+        if ((this.cmbCardLogicalTypes.SelectedIndex > 0) && byte.TryParse(this.cmbCardLogicalTypes.SelectedValue.ToString(), out num2))
+        {
+            dto.IsFilterByCardLogicalFilterType = true;
+            dto.CardLogicalFilterType = num2;
+        }
+        return dto;
+    }
+
+    private void dgvCardList_MouseDown(object sender, MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Right)
+        {
+            DataGridView.HitTestInfo info = this.dgvCardList.HitTest(e.X, e.Y);
+            if (info.RowIndex != -1)
+            {
+                if ((info.RowIndex >= 0) && ((info.ColumnIndex >= 0) && !this.dgvCardList.SelectedRows.Contains(this.dgvCardList.Rows[info.RowIndex])))
+                {
+                    foreach (DataGridViewRow row in this.dgvCardList.SelectedRows)
+                    {
+                        row.Selected = false;
+                    }
+                    this.dgvCardList.Rows[info.RowIndex].Selected = true;
+                }
+                this.dgvCardList.GetCellDisplayRectangle(info.ColumnIndex, info.RowIndex, true);
+                this.ctxCardFunctions.Show((Control) sender, e.X, e.Y);
+            }
+        }
+    }
+
+    private void DisableSearchPanel(bool isDisabled)
+    {
+        this.hideableGroupBox1.Enabled = !isDisabled;
+    }
+
+    private void DisableToolbar(bool isDisabled)
+    {
+        this.tsCardFunctions.Enabled = !isDisabled;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && (this.components != null))
+        {
+            this.components.Dispose();
+        }
+        base.Dispose(disposing);
+    }
+
+    private List<int> GetSelectedCardIds()
+    {
+        DataGridViewSelectedRowCollection selectedRows = this.dgvCardList.SelectedRows;
+        List<int> list = new List<int>();
+        for (int i = 0; i < selectedRows.Count; i++)
+        {
+            list.Add(Convert.ToInt32(selectedRows[i].Cells[this.colCardId.DataPropertyName].Value.ToString()));
+        }
+        return list;
+    }
+
+    private List<CardDataToUpdate> GetSelectedCards()
+    {
+        DataGridViewSelectedRowCollection selectedRows = this.dgvCardList.SelectedRows;
+        List<CardDataToUpdate> list = new List<CardDataToUpdate>();
+        for (int i = 0; i < selectedRows.Count; i++)
+        {
+            CardDataToUpdate item = new CardDataToUpdate {
+                CardId = Convert.ToInt64(selectedRows[i].Cells[this.colCardId.DataPropertyName].Value.ToString()),
+                CardNumber = Convert.ToInt64(selectedRows[i].Cells[this.colCardNumber.DataPropertyName].Value.ToString())
+            };
+            list.Add(item);
+        }
+        return list;
+    }
+
+    private void HandleCommonCardFuntion(Function cardFunction)
+    {
+        List<CardDataToUpdate> selectedCards = this.GetSelectedCards();
+        if ((selectedCards == null) || (selectedCards.Count == 0))
+        {
+            MessageBoxUtils.ShowErrorMessage("Bạn chưa chọn những thẻ cần thao t\x00e1c!");
+        }
+        else
+        {
+            object optArgument = null;
+            if (cardFunction == Function.FUNC_CARD_CHANGE_LOGICAL_TYPE)
+            {
+                FrmChooseCardLogicalType instance = FrmChooseCardLogicalType.GetInstance();
+                instance.ShowDialog();
+                if (!instance.IsConfirmed)
+                {
+                    return;
+                }
+                optArgument = instance.NewCardLogicalType;
+            }
+            else if ((cardFunction == Function.FUNC_CARD_LOCK) || ((cardFunction == Function.FUNC_CARD_UNLOCK) || (cardFunction == Function.FUNC_CARD_REMOVE)))
+            {
+                FrmInputChangeReason instance = FrmInputChangeReason.GetInstance();
+                instance.ShowDialog();
+                if (!instance.IsConfirmed)
+                {
+                    return;
+                }
+                optArgument = instance.InputReason;
+            }
+            if (MessageBoxUtils.ShowConfirmMessage($"Bạn có chắc muốn thực hiện {cardFunction.GetName().ToLower()} cho các thẻ này không?") == DialogResult.Yes)
+            {
+                FrmCardCommonProgress item = new FrmCardCommonProgress(cardFunction, selectedCards, optArgument);
+                this.cardWorkItem.Items.Add(item);
+                item.ShowDialog();
+                this.cardWorkItem.Items.Remove(item);
+                if (!item.IsDisposed)
+                {
+                    item.Dispose();
+                }
+                if (item.CompletedWithSomeSuccess)
+                {
+                    this.LoadCards(PagingType.Current);
+                }
+            }
+        }
+    }
+
+    private void InitializeComponent()
+    {
+        this.components = new Container();
+        ComponentResourceManager manager = new ComponentResourceManager(typeof(UsrCardList));
+        this.hideableGroupBox1 = new HideableGroupBox();
+        this.flowLayoutPanel1 = new FlowLayoutPanel();
+        this.panel6 = new Panel();
+        this.cmbCardLogicalTypes = new ComboBox();
+        this.label2 = new Label();
+        this.panel4 = new Panel();
+        this.tbxCardNumber = new DigitOnlyTextBox();
+        this.label1 = new Label();
+        this.panel3 = new Panel();
+        this.btnClearAll = new Button();
+        this.panel5 = new Panel();
+        this.btnLoadCards = new Button();
+        this.panel1 = new Panel();
+        this.panel2 = new Panel();
+        this.dgvCardList = new CommonDataGridView();
+        this.colCardId = new DataGridViewTextBoxColumn();
+        this.colCardNumber = new DataGridViewTextBoxColumn();
+        this.colPhysicalType = new DataGridViewTextBoxColumn();
+        this.colLogicalType = new DataGridViewTextBoxColumn();
+        this.colPhysicalStatus = new DataGridViewTextBoxColumn();
+        this.colLogicalStatus = new DataGridViewTextBoxColumn();
+        this.colImportedDate = new DataGridViewTextBoxColumn();
+        this.colBlank = new DataGridViewTextBoxColumn();
+        this.tsCardFunctions = new CommonToolStrip();
+        this.tsbtnImportCards = new ToolStripDropDownButton();
+        this.tsmiImportCardsFromFile = new ToolStripMenuItem();
+        this.tsmiImportCardsUsingReader = new ToolStripMenuItem();
+        this.tsbtnChangeCardStatus = new ToolStripDropDownButton();
+        this.tsmiMarkCardBroken = new ToolStripMenuItem();
+        this.tsmiUnmarkCardBroken = new ToolStripMenuItem();
+        this.toolStripSeparator1 = new ToolStripSeparator();
+        this.tsmiMarkCardLost = new ToolStripMenuItem();
+        this.tsmiUnmarkCardLost = new ToolStripMenuItem();
+        this.toolStripSeparator2 = new ToolStripSeparator();
+        this.tsmiLockCard = new ToolStripMenuItem();
+        this.tsmiUnlockCard = new ToolStripMenuItem();
+        this.tsbtnChangeCardLogicalType = new ToolStripButton();
+        this.tsbtnRemoveCards = new ToolStripButton();
+        this.tsbtnExportToFile = new ToolStripButton();
+        this.pagingPanel1 = new PagingPanel();
+        this.loadCardWorker = new BackgroundWorker();
+        this.ctxCardFunctions = new ContextMenuStrip(this.components);
+        this.ctxmiMarkCardBroken = new ToolStripMenuItem();
+        this.ctxmiUnmarkCardBroken = new ToolStripMenuItem();
+        this.toolStripSeparator5 = new ToolStripSeparator();
+        this.ctxmiMarkCardLost = new ToolStripMenuItem();
+        this.ctxmiUnmarkCardLost = new ToolStripMenuItem();
+        this.toolStripSeparator4 = new ToolStripSeparator();
+        this.ctxmiLockCard = new ToolStripMenuItem();
+        this.ctxmiUnlockCard = new ToolStripMenuItem();
+        this.toolStripSeparator3 = new ToolStripSeparator();
+        this.ctxmiChangeCardLogicalType = new ToolStripMenuItem();
+        this.ctxmiRemoveCard = new ToolStripMenuItem();
+        this.openFileDialog1 = new OpenFileDialog();
+        this.toolTip1 = new ToolTip(this.components);
+        this.hideableGroupBox1.WorkingArea.SuspendLayout();
+        this.hideableGroupBox1.SuspendLayout();
+        this.flowLayoutPanel1.SuspendLayout();
+        this.panel6.SuspendLayout();
+        this.panel4.SuspendLayout();
+        this.panel3.SuspendLayout();
+        this.panel2.SuspendLayout();
+        ((ISupportInitialize) this.dgvCardList).BeginInit();
+        this.tsCardFunctions.SuspendLayout();
+        this.ctxCardFunctions.SuspendLayout();
+        base.SuspendLayout();
+        this.hideableGroupBox1.BorderStyle = BorderStyle.FixedSingle;
+        this.hideableGroupBox1.Dock = DockStyle.Top;
+        this.hideableGroupBox1.Font = new Font("Tahoma", 9f, FontStyle.Regular, GraphicsUnit.Point, 0);
+        this.hideableGroupBox1.Location = new Point(5, 5);
+        this.hideableGroupBox1.Name = "hideableGroupBox1";
+        this.hideableGroupBox1.Size = new Size(0x293, 150);
+        this.hideableGroupBox1.TabIndex = 0;
+        this.hideableGroupBox1.Title = "Ti\x00eau Ch\x00ed T\x00ecm Kiếm";
+        this.hideableGroupBox1.WorkingArea.BackColor = SystemColors.Control;
+        this.hideableGroupBox1.WorkingArea.Controls.Add(this.flowLayoutPanel1);
+        this.hideableGroupBox1.WorkingArea.Controls.Add(this.panel3);
+        this.hideableGroupBox1.WorkingArea.Dock = DockStyle.Fill;
+        this.hideableGroupBox1.WorkingArea.Location = new Point(0, 0x19);
+        this.hideableGroupBox1.WorkingArea.Name = "WorkingArea";
+        this.hideableGroupBox1.WorkingArea.Padding = new Padding(5);
+        this.hideableGroupBox1.WorkingArea.Size = new Size(0x291, 0x7b);
+        this.hideableGroupBox1.WorkingArea.TabIndex = 5;
+        this.flowLayoutPanel1.Controls.Add(this.panel6);
+        this.flowLayoutPanel1.Controls.Add(this.panel4);
+        this.flowLayoutPanel1.Dock = DockStyle.Fill;
+        this.flowLayoutPanel1.Location = new Point(5, 5);
+        this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+        this.flowLayoutPanel1.Size = new Size(0x200, 0x71);
+        this.flowLayoutPanel1.TabIndex = 0x15;
+        this.panel6.Controls.Add(this.cmbCardLogicalTypes);
+        this.panel6.Controls.Add(this.label2);
+        this.panel6.Location = new Point(5, 5);
+        this.panel6.Margin = new Padding(5, 5, 0, 0);
+        this.panel6.Name = "panel6";
+        this.panel6.Size = new Size(500, 0x19);
+        this.panel6.TabIndex = 1;
+        this.cmbCardLogicalTypes.Dock = DockStyle.Left;
+        this.cmbCardLogicalTypes.DropDownStyle = ComboBoxStyle.DropDownList;
+        this.cmbCardLogicalTypes.FormattingEnabled = true;
+        this.cmbCardLogicalTypes.Location = new Point(150, 0);
+        this.cmbCardLogicalTypes.Name = "cmbCardLogicalTypes";
+        this.cmbCardLogicalTypes.Size = new Size(200, 0x16);
+        this.cmbCardLogicalTypes.TabIndex = 1;
+        this.label2.Dock = DockStyle.Left;
+        this.label2.Location = new Point(0, 0);
+        this.label2.Name = "label2";
+        this.label2.Size = new Size(150, 0x19);
+        this.label2.TabIndex = 0;
+        this.label2.Text = "T\x00ecm theo loại thẻ luận l\x00fd:";
+        this.label2.TextAlign = ContentAlignment.MiddleLeft;
+        this.panel4.Controls.Add(this.tbxCardNumber);
+        this.panel4.Controls.Add(this.label1);
+        this.panel4.Location = new Point(5, 0x23);
+        this.panel4.Margin = new Padding(5, 5, 0, 0);
+        this.panel4.Name = "panel4";
+        this.panel4.Size = new Size(500, 0x19);
+        this.panel4.TabIndex = 2;
+        this.tbxCardNumber.Dock = DockStyle.Left;
+        this.tbxCardNumber.Location = new Point(150, 0);
+        this.tbxCardNumber.MaxLength = 8;
+        this.tbxCardNumber.Name = "tbxCardNumber";
+        this.tbxCardNumber.Size = new Size(200, 0x16);
+        this.tbxCardNumber.TabIndex = 0x18;
+        this.label1.Dock = DockStyle.Left;
+        this.label1.Location = new Point(0, 0);
+        this.label1.Name = "label1";
+        this.label1.Size = new Size(150, 0x19);
+        this.label1.TabIndex = 0;
+        this.label1.Text = "T\x00ecm theo số in tr\x00ean thẻ:";
+        this.label1.TextAlign = ContentAlignment.MiddleLeft;
+        this.panel3.Controls.Add(this.btnClearAll);
+        this.panel3.Controls.Add(this.panel5);
+        this.panel3.Controls.Add(this.btnLoadCards);
+        this.panel3.Dock = DockStyle.Right;
+        this.panel3.Location = new Point(0x205, 5);
+        this.panel3.Name = "panel3";
+        this.panel3.Padding = new Padding(10, 0, 0, 0);
+        this.panel3.Size = new Size(0x87, 0x71);
+        this.panel3.TabIndex = 20;
+        this.btnClearAll.Dock = DockStyle.Top;
+        this.btnClearAll.Location = new Point(10, 0x24);
+        this.btnClearAll.Name = "btnClearAll";
+        this.btnClearAll.Size = new Size(0x7d, 30);
+        this.btnClearAll.TabIndex = 3;
+        this.btnClearAll.Text = "Thiết &Lập Lại";
+        this.btnClearAll.TextImageRelation = TextImageRelation.ImageBeforeText;
+        this.toolTip1.SetToolTip(this.btnClearAll, "Chuyển c\x00e1c ti\x00eau ch\x00ed t\x00ecm kiếm về gi\x00e1 trị mặc định");
+        this.btnClearAll.UseVisualStyleBackColor = true;
+        this.panel5.Dock = DockStyle.Top;
+        this.panel5.Location = new Point(10, 30);
+        this.panel5.Name = "panel5";
+        this.panel5.Size = new Size(0x7d, 6);
+        this.panel5.TabIndex = 2;
+        this.btnLoadCards.Dock = DockStyle.Top;
+        this.btnLoadCards.Location = new Point(10, 0);
+        this.btnLoadCards.Name = "btnLoadCards";
+        this.btnLoadCards.Size = new Size(0x7d, 30);
+        this.btnLoadCards.TabIndex = 1;
+        this.btnLoadCards.Text = "&Tải Dữ Liệu";
+        this.btnLoadCards.TextImageRelation = TextImageRelation.ImageBeforeText;
+        this.btnLoadCards.UseVisualStyleBackColor = true;
+        this.panel1.Dock = DockStyle.Top;
+        this.panel1.Location = new Point(5, 0x9b);
+        this.panel1.Name = "panel1";
+        this.panel1.Size = new Size(0x293, 5);
+        this.panel1.TabIndex = 1;
+        this.panel2.BorderStyle = BorderStyle.FixedSingle;
+        this.panel2.Controls.Add(this.dgvCardList);
+        this.panel2.Controls.Add(this.tsCardFunctions);
+        this.panel2.Controls.Add(this.pagingPanel1);
+        this.panel2.Dock = DockStyle.Fill;
+        this.panel2.Location = new Point(5, 160);
+        this.panel2.Name = "panel2";
+        this.panel2.Size = new Size(0x293, 0x216);
+        this.panel2.TabIndex = 4;
+        this.dgvCardList.AllowUserToAddRows = false;
+        this.dgvCardList.AllowUserToDeleteRows = false;
+        this.dgvCardList.AllowUserToOrderColumns = true;
+        this.dgvCardList.AllowUserToResizeRows = false;
+        this.dgvCardList.BackgroundColor = Color.White;
+        this.dgvCardList.BorderStyle = BorderStyle.None;
+        DataGridViewColumn[] dataGridViewColumns = new DataGridViewColumn[] { this.colCardId, this.colCardNumber, this.colPhysicalType, this.colLogicalType, this.colPhysicalStatus, this.colLogicalStatus, this.colImportedDate, this.colBlank };
+        this.dgvCardList.Columns.AddRange(dataGridViewColumns);
+        this.dgvCardList.Dock = DockStyle.Fill;
+        this.dgvCardList.Location = new Point(0, 0x19);
+        this.dgvCardList.Name = "dgvCardList";
+        this.dgvCardList.ReadOnly = true;
+        this.dgvCardList.RowHeadersVisible = false;
+        this.dgvCardList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        this.dgvCardList.Size = new Size(0x291, 0x1e2);
+        this.dgvCardList.TabIndex = 2;
+        this.colCardId.DataPropertyName = "colCardId";
+        this.colCardId.HeaderText = "M\x00e3 Thẻ";
+        this.colCardId.Name = "colCardId";
+        this.colCardId.ReadOnly = true;
+        this.colCardNumber.DataPropertyName = "colCardNumber";
+        this.colCardNumber.HeaderText = "Số Thẻ";
+        this.colCardNumber.Name = "colCardNumber";
+        this.colCardNumber.ReadOnly = true;
+        this.colPhysicalType.DataPropertyName = "colPhysicalType";
+        this.colPhysicalType.HeaderText = "Loại Thẻ (vật l\x00fd)";
+        this.colPhysicalType.Name = "colPhysicalType";
+        this.colPhysicalType.ReadOnly = true;
+        this.colPhysicalType.Visible = false;
+        this.colPhysicalType.Width = 0x7d;
+        this.colLogicalType.DataPropertyName = "colLogicalType";
+        this.colLogicalType.HeaderText = "Loại Thẻ (luận l\x00fd)";
+        this.colLogicalType.Name = "colLogicalType";
+        this.colLogicalType.ReadOnly = true;
+        this.colLogicalType.Width = 150;
+        this.colPhysicalStatus.DataPropertyName = "colPhysicalStatus";
+        this.colPhysicalStatus.HeaderText = "Trạng Th\x00e1i (vật l\x00fd)";
+        this.colPhysicalStatus.Name = "colPhysicalStatus";
+        this.colPhysicalStatus.ReadOnly = true;
+        this.colPhysicalStatus.Width = 150;
+        this.colLogicalStatus.DataPropertyName = "colLogicalStatus";
+        this.colLogicalStatus.HeaderText = "Trạng Th\x00e1i (luận l\x00fd)";
+        this.colLogicalStatus.Name = "colLogicalStatus";
+        this.colLogicalStatus.ReadOnly = true;
+        this.colLogicalStatus.Width = 150;
+        this.colImportedDate.DataPropertyName = "colImportedDate";
+        this.colImportedDate.HeaderText = "Ng\x00e0y Nhập";
+        this.colImportedDate.Name = "colImportedDate";
+        this.colImportedDate.ReadOnly = true;
+        this.colBlank.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        this.colBlank.DataPropertyName = "colBlank";
+        this.colBlank.HeaderText = "";
+        this.colBlank.Name = "colBlank";
+        this.colBlank.ReadOnly = true;
+        ToolStripItem[] toolStripItems = new ToolStripItem[] { this.tsbtnImportCards, this.tsbtnChangeCardStatus, this.tsbtnChangeCardLogicalType, this.tsbtnRemoveCards, this.tsbtnExportToFile };
+        this.tsCardFunctions.Items.AddRange(toolStripItems);
+        this.tsCardFunctions.Location = new Point(0, 0);
+        this.tsCardFunctions.Name = "tsCardFunctions";
+        this.tsCardFunctions.ShowItemToolTips = false;
+        this.tsCardFunctions.Size = new Size(0x291, 0x19);
+        this.tsCardFunctions.TabIndex = 1;
+        this.tsCardFunctions.Text = "toolStrip1";
+        ToolStripItem[] itemArray2 = new ToolStripItem[] { this.tsmiImportCardsFromFile, this.tsmiImportCardsUsingReader };
+        this.tsbtnImportCards.DropDownItems.AddRange(itemArray2);
+        this.tsbtnImportCards.Image = (Image) manager.GetObject("tsbtnImportCards.Image");
+        this.tsbtnImportCards.ImageAlign = ContentAlignment.MiddleLeft;
+        this.tsbtnImportCards.ImageTransparentColor = Color.Magenta;
+        this.tsbtnImportCards.Name = "tsbtnImportCards";
+        this.tsbtnImportCards.Size = new Size(0x58, 0x16);
+        this.tsbtnImportCards.Text = "&Nhập Thẻ";
+        this.tsmiImportCardsFromFile.Name = "tsmiImportCardsFromFile";
+        this.tsmiImportCardsFromFile.Size = new Size(0xc3, 0x16);
+        this.tsmiImportCardsFromFile.Text = "Nhập Thẻ Từ Tập Tin...";
+        this.tsmiImportCardsUsingReader.Enabled = false;
+        this.tsmiImportCardsUsingReader.Name = "tsmiImportCardsUsingReader";
+        this.tsmiImportCardsUsingReader.Size = new Size(0xc3, 0x16);
+        this.tsmiImportCardsUsingReader.Text = "Nhập Thẻ Trực Tiếp...";
+        this.tsmiImportCardsUsingReader.Visible = false;
+        ToolStripItem[] itemArray3 = new ToolStripItem[] { this.tsmiMarkCardBroken, this.tsmiUnmarkCardBroken, this.toolStripSeparator1, this.tsmiMarkCardLost, this.tsmiUnmarkCardLost, this.toolStripSeparator2, this.tsmiLockCard, this.tsmiUnlockCard };
+        this.tsbtnChangeCardStatus.DropDownItems.AddRange(itemArray3);
+        this.tsbtnChangeCardStatus.Image = Resources.MarkBlue_16x16;
+        this.tsbtnChangeCardStatus.ImageTransparentColor = Color.Magenta;
+        this.tsbtnChangeCardStatus.Name = "tsbtnChangeCardStatus";
+        this.tsbtnChangeCardStatus.Size = new Size(0x71, 0x16);
+        this.tsbtnChangeCardStatus.Text = "Đổi &Trạng Th\x00e1i";
+        this.tsmiMarkCardBroken.Name = "tsmiMarkCardBroken";
+        this.tsmiMarkCardBroken.Size = new Size(220, 0x16);
+        this.tsmiMarkCardBroken.Text = "Đ\x00e1nh Dấu Thẻ Bị Hư...";
+        this.tsmiUnmarkCardBroken.Name = "tsmiUnmarkCardBroken";
+        this.tsmiUnmarkCardBroken.Size = new Size(220, 0x16);
+        this.tsmiUnmarkCardBroken.Text = "Hủy Đ\x00e1nh Dấu Thẻ Bị Hư...";
+        this.toolStripSeparator1.Name = "toolStripSeparator1";
+        this.toolStripSeparator1.Size = new Size(0xd9, 6);
+        this.tsmiMarkCardLost.Name = "tsmiMarkCardLost";
+        this.tsmiMarkCardLost.Size = new Size(220, 0x16);
+        this.tsmiMarkCardLost.Text = "Đ\x00e1nh dấu Thẻ Bị Mất...";
+        this.tsmiUnmarkCardLost.Name = "tsmiUnmarkCardLost";
+        this.tsmiUnmarkCardLost.Size = new Size(220, 0x16);
+        this.tsmiUnmarkCardLost.Text = "Hủy Đ\x00e1nh Dấu Thẻ Bị Mất...";
+        this.toolStripSeparator2.Name = "toolStripSeparator2";
+        this.toolStripSeparator2.Size = new Size(0xd9, 6);
+        this.tsmiLockCard.Image = Resources.Lock_16x16;
+        this.tsmiLockCard.Name = "tsmiLockCard";
+        this.tsmiLockCard.Size = new Size(220, 0x16);
+        this.tsmiLockCard.Text = "Kh\x00f3a Thẻ...";
+        this.tsmiUnlockCard.Image = Resources.UnLock_16x16;
+        this.tsmiUnlockCard.Name = "tsmiUnlockCard";
+        this.tsmiUnlockCard.Size = new Size(220, 0x16);
+        this.tsmiUnlockCard.Text = "Mở Kh\x00f3a Thẻ...";
+        this.tsbtnChangeCardLogicalType.Image = (Image) manager.GetObject("tsbtnChangeCardLogicalType.Image");
+        this.tsbtnChangeCardLogicalType.ImageTransparentColor = Color.Magenta;
+        this.tsbtnChangeCardLogicalType.Name = "tsbtnChangeCardLogicalType";
+        this.tsbtnChangeCardLogicalType.Size = new Size(0x66, 0x16);
+        this.tsbtnChangeCardLogicalType.Text = "Đổi &Loại Thẻ...";
+        this.tsbtnRemoveCards.Image = (Image) manager.GetObject("tsbtnRemoveCards.Image");
+        this.tsbtnRemoveCards.ImageTransparentColor = Color.Magenta;
+        this.tsbtnRemoveCards.Name = "tsbtnRemoveCards";
+        this.tsbtnRemoveCards.Size = new Size(0x62, 0x16);
+        this.tsbtnRemoveCards.Text = "Loại &Bỏ Thẻ...";
+        this.tsbtnExportToFile.Alignment = ToolStripItemAlignment.Right;
+        this.tsbtnExportToFile.Image = Resources.Export_16x16;
+        this.tsbtnExportToFile.ImageTransparentColor = Color.Magenta;
+        this.tsbtnExportToFile.Name = "tsbtnExportToFile";
+        this.tsbtnExportToFile.Size = new Size(0x67, 0x16);
+        this.tsbtnExportToFile.Text = "Xuất Dữ Liệu...";
+        this.pagingPanel1.BackColor = SystemColors.Control;
+        this.pagingPanel1.Dock = DockStyle.Bottom;
+        this.pagingPanel1.Font = new Font("Tahoma", 9.25f);
+        this.pagingPanel1.ForeColor = SystemColors.ControlText;
+        this.pagingPanel1.IsShowMessage = false;
+        this.pagingPanel1.Location = new Point(0, 0x1fb);
+        this.pagingPanel1.Name = "pagingPanel1";
+        this.pagingPanel1.Padding = new Padding(3);
+        this.pagingPanel1.Size = new Size(0x291, 0x19);
+        this.pagingPanel1.TabIndex = 0;
+        ToolStripItem[] itemArray4 = new ToolStripItem[] { this.ctxmiMarkCardBroken, this.ctxmiUnmarkCardBroken, this.toolStripSeparator5, this.ctxmiMarkCardLost, this.ctxmiUnmarkCardLost, this.toolStripSeparator4, this.ctxmiLockCard, this.ctxmiUnlockCard, this.toolStripSeparator3 };
+        itemArray4[9] = this.ctxmiChangeCardLogicalType;
+        itemArray4[10] = this.ctxmiRemoveCard;
+        this.ctxCardFunctions.Items.AddRange(itemArray4);
+        this.ctxCardFunctions.Name = "ctxCardFunctions";
+        this.ctxCardFunctions.Size = new Size(0xdd, 0xc6);
+        this.ctxmiMarkCardBroken.Name = "ctxmiMarkCardBroken";
+        this.ctxmiMarkCardBroken.Size = new Size(220, 0x16);
+        this.ctxmiMarkCardBroken.Text = "Đ\x00e1nh Dấu Thẻ Bị Hư...";
+        this.ctxmiUnmarkCardBroken.Name = "ctxmiUnmarkCardBroken";
+        this.ctxmiUnmarkCardBroken.Size = new Size(220, 0x16);
+        this.ctxmiUnmarkCardBroken.Text = "Hủy Đ\x00e1nh Dấu Thẻ Bị Hư...";
+        this.toolStripSeparator5.Name = "toolStripSeparator5";
+        this.toolStripSeparator5.Size = new Size(0xd9, 6);
+        this.ctxmiMarkCardLost.Name = "ctxmiMarkCardLost";
+        this.ctxmiMarkCardLost.Size = new Size(220, 0x16);
+        this.ctxmiMarkCardLost.Text = "Đ\x00e1nh Dấu Thẻ Bị Mất...";
+        this.ctxmiUnmarkCardLost.Name = "ctxmiUnmarkCardLost";
+        this.ctxmiUnmarkCardLost.Size = new Size(220, 0x16);
+        this.ctxmiUnmarkCardLost.Text = "Hủy Đ\x00e1nh Dấu Thẻ Bị Mất...";
+        this.toolStripSeparator4.Name = "toolStripSeparator4";
+        this.toolStripSeparator4.Size = new Size(0xd9, 6);
+        this.ctxmiLockCard.Image = Resources.Lock_16x16;
+        this.ctxmiLockCard.Name = "ctxmiLockCard";
+        this.ctxmiLockCard.Size = new Size(220, 0x16);
+        this.ctxmiLockCard.Text = "Kh\x00f3a Thẻ...";
+        this.ctxmiUnlockCard.Image = Resources.UnLock_16x16;
+        this.ctxmiUnlockCard.Name = "ctxmiUnlockCard";
+        this.ctxmiUnlockCard.Size = new Size(220, 0x16);
+        this.ctxmiUnlockCard.Text = "Mở Kh\x00f3a Thẻ...";
+        this.toolStripSeparator3.Name = "toolStripSeparator3";
+        this.toolStripSeparator3.Size = new Size(0xd9, 6);
+        this.ctxmiChangeCardLogicalType.Image = Resources.Annotation_Black_16x16;
+        this.ctxmiChangeCardLogicalType.Name = "ctxmiChangeCardLogicalType";
+        this.ctxmiChangeCardLogicalType.Size = new Size(220, 0x16);
+        this.ctxmiChangeCardLogicalType.Text = "Đổi Loại Thẻ...";
+        this.ctxmiRemoveCard.Image = Resources.Cancel_16x16;
+        this.ctxmiRemoveCard.Name = "ctxmiRemoveCard";
+        this.ctxmiRemoveCard.Size = new Size(220, 0x16);
+        this.ctxmiRemoveCard.Text = "Loại Bỏ Thẻ...";
+        this.openFileDialog1.FileName = "openFileDialog1";
+        base.AutoScaleDimensions = new SizeF(7f, 14f);
+        base.AutoScaleMode = AutoScaleMode.Font;
+        base.Controls.Add(this.panel2);
+        base.Controls.Add(this.panel1);
+        base.Controls.Add(this.hideableGroupBox1);
+        base.Name = "UsrCardList";
+        base.Size = new Size(0x29d, 0x2bb);
+        this.hideableGroupBox1.WorkingArea.ResumeLayout(false);
+        this.hideableGroupBox1.ResumeLayout(false);
+        this.hideableGroupBox1.PerformLayout();
+        this.flowLayoutPanel1.ResumeLayout(false);
+        this.panel6.ResumeLayout(false);
+        this.panel4.ResumeLayout(false);
+        this.panel4.PerformLayout();
+        this.panel3.ResumeLayout(false);
+        this.panel2.ResumeLayout(false);
+        this.panel2.PerformLayout();
+        ((ISupportInitialize) this.dgvCardList).EndInit();
+        this.tsCardFunctions.ResumeLayout(false);
+        this.tsCardFunctions.PerformLayout();
+        this.ctxCardFunctions.ResumeLayout(false);
+        base.ResumeLayout(false);
+    }
+
+    private void LoadCards(PagingType pagingType)
+    {
+        if (!this.loadCardWorker.IsBusy)
+        {
+            this.cardFilter = this.CollectCardFilterData();
+            if (this.cardFilter != null)
+            {
+                this.DisableSearchPanel(true);
+                this.DisableToolbar(true);
+                this.dgvCardList.DataSource = null;
+                this.pagingPanel1.SwitchToLoadingState();
+                this.pagingType = pagingType;
+                this.loadCardWorker.RunWorkerAsync();
+            }
+        }
+    }
+
+    private void loadCardWorker_Completed(object sender, RunWorkerCompletedEventArgs e)
+    {
+        if ((this.loadedCards == null) || (this.loadedCards.Count == 0))
+        {
+            this.DisableSearchPanel(false);
+            this.DisableToolbar(false);
+            this.pagingPanel1.SwitchToIddleState(0, false, false);
+        }
+        else
+        {
+            int count = this.loadedCards.Count;
+            int displayedRecords = (count > this.recordsPerPage) ? this.recordsPerPage : count;
+            int num3 = count - this.recordsPerPage;
+            bool hasNextPage = false;
+            bool hasPrevPage = false;
+            switch (this.pagingType)
+            {
+                case PagingType.First:
+                    if (num3 > 0)
+                    {
+                        hasNextPage = true;
+                        this.loadedCards.RemoveRange(this.recordsPerPage, num3);
+                    }
+                    break;
+
+                case PagingType.Next:
+                    hasPrevPage = true;
+                    if (num3 > 0)
+                    {
+                        hasNextPage = true;
+                        this.loadedCards.RemoveRange(this.recordsPerPage, num3);
+                    }
+                    break;
+
+                case PagingType.Previous:
+                    hasNextPage = true;
+                    if (num3 > 0)
+                    {
+                        hasPrevPage = true;
+                        this.loadedCards.RemoveRange(0, num3);
+                    }
+                    break;
+
+                case PagingType.Current:
+                    if (num3 > 0)
+                    {
+                        this.loadedCards.RemoveRange(0, num3);
+                    }
+                    this.pagingPanel1.SwitchToIddleState(displayedRecords);
+                    break;
+
+                default:
+                    break;
+            }
+            if (this.dtblCards != null)
+            {
+                this.dtblCards.Clear();
+            }
+            else
+            {
+                this.dtblCards = new DataTable();
+                this.dtblCards.Columns.Add(this.colCardId.DataPropertyName, typeof(long));
+                this.dtblCards.Columns.Add(this.colCardNumber.DataPropertyName, typeof(long));
+                this.dtblCards.Columns.Add(this.colImportedDate.DataPropertyName);
+                this.dtblCards.Columns.Add(this.colLogicalStatus.DataPropertyName);
+                this.dtblCards.Columns.Add(this.colLogicalType.DataPropertyName);
+                this.dtblCards.Columns.Add(this.colPhysicalStatus.DataPropertyName);
+                this.dtblCards.Columns.Add(this.colPhysicalType.DataPropertyName);
+            }
+            foreach (CardDto dto in this.loadedCards)
+            {
+                DataRow row = this.dtblCards.NewRow();
+                row[this.colCardId.DataPropertyName] = dto.Id;
+                row[this.colCardNumber.DataPropertyName] = dto.Number;
+                row[this.colImportedDate.DataPropertyName] = dto.ImportedTime.ToString("dd/MM/yyyy");
+                row[this.colLogicalStatus.DataPropertyName] = ((CardLogicalStatus) dto.LogicalStatus).GetName();
+                row[this.colLogicalType.DataPropertyName] = ((CardLogicalType) dto.LogicalType).GetName();
+                row[this.colPhysicalStatus.DataPropertyName] = ((CardPhysicalStatus) dto.PhysicalStatus).GetName();
+                row[this.colPhysicalType.DataPropertyName] = ((CardPhysicalType) dto.PhysicalType).GetName();
+                this.dtblCards.Rows.Add(row);
+            }
+            this.dgvCardList.DataSource = this.dtblCards;
+            this.DisableSearchPanel(false);
+            this.DisableToolbar(false);
+            if (this.pagingType != PagingType.Current)
+            {
+                this.pagingPanel1.SwitchToIddleState(displayedRecords, hasNextPage, hasPrevPage);
+            }
+        }
+    }
+
+    private void loadCardWorker_DoWork(object sender, DoWorkEventArgs e)
+    {
+        try
+        {
+            switch (this.pagingType)
+            {
+                case PagingType.First:
+                    this.loadedCards = this.parkingProxy.CreateProxy().GetCardList(this.storageService.AdminSession.Id, (byte) this.pagingType, this.cardFilter, this.recordsPerPage + 1, 0L);
+                    break;
+
+                case PagingType.Next:
+                    if ((this.loadedCards != null) && (this.loadedCards.Count != 0))
+                    {
+                        long limit = this.loadedCards.Max<CardDto>(card => card.Number);
+                        this.loadedCards = this.parkingProxy.CreateProxy().GetCardList(this.storageService.AdminSession.Id, (byte) this.pagingType, this.cardFilter, this.recordsPerPage + 1, limit);
+                    }
+                    break;
+
+                case PagingType.Previous:
+                    if ((this.loadedCards != null) && (this.loadedCards.Count != 0))
+                    {
+                        long limit = this.loadedCards.Min<CardDto>(card => card.Number);
+                        this.loadedCards = this.parkingProxy.CreateProxy().GetCardList(this.storageService.AdminSession.Id, (byte) this.pagingType, this.cardFilter, this.recordsPerPage + 1, limit);
+                    }
+                    break;
+
+                case PagingType.Current:
+                    if ((this.loadedCards != null) && (this.loadedCards.Count != 0))
+                    {
+                        long limit = this.loadedCards.Max<CardDto>(card => card.Number) + 1L;
+                        this.loadedCards = this.parkingProxy.CreateProxy().GetCardList(this.storageService.AdminSession.Id, 3, this.cardFilter, this.recordsPerPage + 1, limit);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        catch (ParkingException exception1)
+        {
+            base.Invoke(() => MessageBoxUtils.ShowErrorMessage(this, exception1.GetErrorMessage(true)));
+        }
+    }
+
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        DataTable table = new DataTable();
+        table.Columns.Add("Value");
+        table.Columns.Add("Display");
+        DataRow row = table.NewRow();
+        row["Value"] = -1;
+        row["Display"] = "(tất cả)";
+        table.Rows.Add(row);
+        foreach (CardLogicalFilterType type in CardLogicalFilterTypeExt.GetCardLogicalFilterTypeList())
+        {
+            DataRow row2 = table.NewRow();
+            row2["Value"] = (byte) type;
+            row2["Display"] = type.GetName();
+            table.Rows.Add(row2);
+        }
+        this.cmbCardLogicalTypes.ValueMember = "Value";
+        this.cmbCardLogicalTypes.DisplayMember = "Display";
+        this.cmbCardLogicalTypes.DataSource = table;
+    }
+
+    private void pagingPanel1_NavigationLinkClicked(PagingType pagingType)
+    {
+        this.LoadCards(pagingType);
+    }
+
+    private void tsbtnExportToFile_Click(object sender, EventArgs e)
+    {
+        if ((this.dgvCardList.Rows.Count != 0) || (MessageBoxUtils.ShowConfirmMessage("Danh s\x00e1ch hiện tại kh\x00f4ng c\x00f3 dữ liệu. Bạn c\x00f3 muốn xuất d\x00f2ng ti\x00eau đề của c\x00e1c cột ra tập tin Excel kh\x00f4ng?") == DialogResult.Yes))
+        {
+            FrmExportFileOptions options = new FrmExportFileOptions(FormExportFileType.CardList);
+            options.ShowDialog();
+            if (options.DialogResult == DialogResult.OK)
+            {
+                if (string.IsNullOrEmpty(options.configExportFile.HeaderText))
+                {
+                    options.configExportFile.HeaderText = "Danh S\x00e1ch Thẻ";
+                }
+                if (options.isExportAllData)
+                {
+                    FrmExportDtToFile item = new FrmExportDtToFile(options.configExportFile, this.dgvCardList, this.CollectCardFilterData());
+                    this.cardWorkItem.Items.Add(item);
+                    item.ShowDialog();
+                    this.cardWorkItem.Items.Remove(item);
+                    item.Dispose();
+                }
+                else
+                {
+                    new FrmExportDgvToFile(options.configExportFile, this.dgvCardList, FormExportFileType.CardList, false).ShowDialog();
+                }
+            }
+        }
+    }
+
+    private void tsmiImportCardsFromFile_Click(object sender, EventArgs e)
+    {
+        this.openFileDialog1.Filter = "Text files (*.txt)|*.txt";
+        this.openFileDialog1.Multiselect = false;
+        this.openFileDialog1.CheckFileExists = true;
+        if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
+        {
+            string[] strArray = null;
+            try
+            {
+                strArray = File.ReadAllLines(this.openFileDialog1.FileName);
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBoxUtils.ShowErrorMessage("Kh\x00f4ng t\x00ecm thấy tập tin đ\x00e3 chọn!");
+                return;
+            }
+            catch (IOException)
+            {
+                MessageBoxUtils.ShowErrorMessage("Tập tin đang được mở bởi ứng dụng kh\x00e1c, xin h\x00e3y đ\x00f3ng ứng dụng đ\x00f3 trước!");
+                return;
+            }
+            catch (SecurityException)
+            {
+                MessageBoxUtils.ShowErrorMessage("Kh\x00f4ng c\x00f3 quyền truy xuất đến tập tin đ\x00e3 chọn!");
+                return;
+            }
+            if ((strArray != null) && (strArray.Length != 0))
+            {
+                List<CardToImport> cardsToImport = new List<CardToImport>();
+                char[] separator = new char[] { ' ', '\t' };
+                string[] strArray2 = null;
+                foreach (string str in strArray)
+                {
+                    uint num;
+                    uint num2;
+                    strArray2 = str.Split(separator);
+                    if ((strArray2.Length >= 2) && (uint.TryParse(strArray2[0], out num) && uint.TryParse(strArray2[1], out num2)))
+                    {
+                        CardToImport item = new CardToImport {
+                            CardId = num,
+                            CardNumber = num2
+                        };
+                        cardsToImport.Add(item);
+                    }
+                }
+                int count = cardsToImport.Count;
+                int length = strArray.Length;
+                if (count == 0)
+                {
+                    MessageBoxUtils.ShowErrorMessage("Tập tin kh\x00f4ng chứa dữ liệu hoặc kh\x00f4ng c\x00f3 d\x00f2ng n\x00e0o đ\x00fang định dạng. Xin h\x00e3y kiểm tra lại!");
+                }
+                else if ((count == length) || (MessageBoxUtils.ShowConfirmMessage(string.Format("Chương tr\x00ecnh nhận thấy c\x00f3 {0} d\x00f2ng dữ liệu trong tập tin nhưng chỉ c\x00f3 {1} d\x00f2ng đ\x00fang định dạng. Bạn c\x00f3 muốn tiếp tục nhập {1} thẻ đ\x00e3 đọc được kh\x00f4ng?", length, count)) == DialogResult.Yes))
+                {
+                    string name = typeof(FrmImportCardFromFile).Name;
+                    if (!this.cardWorkItem.Items.Contains(name))
+                    {
+                        this.frmImportCardFromFile = FrmImportCardFromFile.GetInstance();
+                        this.cardWorkItem.Items.Add(this.frmImportCardFromFile, name);
+                    }
+                    else
+                    {
+                        this.frmImportCardFromFile = this.cardWorkItem.Items.Get<FrmImportCardFromFile>(name);
+                        if ((this.frmImportCardFromFile == null) || this.frmImportCardFromFile.IsDisposed)
+                        {
+                            this.cardWorkItem.Items.Remove(this.frmImportCardFromFile);
+                            this.frmImportCardFromFile = FrmImportCardFromFile.GetInstance();
+                            this.cardWorkItem.Items.Add(this.frmImportCardFromFile, name);
+                        }
+                    }
+                    this.frmImportCardFromFile.ShowAndStartNewSession(cardsToImport);
+                }
+            }
+            else
+            {
+                MessageBoxUtils.ShowErrorMessage("Tập tin kh\x00f4ng chứa dữ liệu!");
+            }
+        }
+    }
+
+    private void tsmiImportCardsUsingReader_Click(object sender, EventArgs e)
+    {
+    }
+}
+
+ 
+Collapse Methods
+ 
